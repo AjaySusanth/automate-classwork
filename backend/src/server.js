@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import prisma from "./config/db.config.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// API routes
+app.use("/api/auth", authRoutes);
 
 app.get("/health", async (req, res) => {
   try {

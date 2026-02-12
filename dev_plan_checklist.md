@@ -28,25 +28,29 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Implement JWT middleware
-- [ ] Implement auth controller (register, login, me)
-- [ ] Add auth routes
+- [x] Implement JWT middleware
+- [x] Implement auth controller (register, login, me)
+- [x] Add auth routes
+- [x] Handle unique constraint race condition (P2002)
 
 **Stop point**
 
-- [ ] Register creates user
-- [ ] Login returns JWT
-- [ ] Protected route blocks invalid token
+- [x] Register creates user
+- [x] Login returns JWT
+- [x] Protected route blocks invalid token
 
 **Frontend**
 
-- [ ] Create Login page
-- [ ] Create Register page
-- [ ] Build AuthContext (login/logout, token storage)
+- [x] Create Login page
+- [x] Create Register page
+- [x] Build AuthContext (login/logout, token storage)
+- [x] Create API service layer
+- [x] Create ProtectedRoute component
+- [x] Wire up React Router
 
 **Integration check**
 
-- [ ] Login from UI works and token is used on API calls
+- [x] Login from UI works and token is used on API calls
 
 ---
 

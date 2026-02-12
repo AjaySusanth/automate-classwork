@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  TEACHER
+  STUDENT
+}
+
+enum ReminderType {
+  H24
+  H2
+  CUSTOM
+}
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  LATE
+}
+
+enum NotificationChannel {
+  TELEGRAM
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  password       String
+  name           String
+  role           UserRole
+  telegramChatId String?  @unique
+  telegramLinked Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  assignments     Assignment[]      @relation("AssignmentCreatedBy")
+  submissions     Submission[]
+  notificationLog NotificationLog[]
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  dueDate     DateTime
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User              @relation("AssignmentCreatedBy", fields: [createdById], references: [id])
+  reminders   Reminder[]
+  submissions Submission[]
+  logs        NotificationLog[]
+}
+
+model Reminder {
+  id           String       @id @default(cuid())
+  assignmentId String
+  reminderTime DateTime
+  type         ReminderType
+  sent         Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  assignmentId String
+  studentId    String
+  status       SubmissionStatus @default(PENDING)
+  submittedAt  DateTime?
+  createdAt    DateTime         @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    User       @relation(fields: [studentId], references: [id])
+}
+
+model NotificationLog {
+  id           String              @id @default(cuid())
+  userId       String
+  assignmentId String
+  channel      NotificationChannel
+  status       NotificationStatus
+  sentAt       DateTime            @default(now())
+  errorMessage String?
+
+  user       User       @relation(fields: [userId], references: [id])
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+}

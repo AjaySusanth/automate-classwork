@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma from "../config/db.config.js";
-import { Prisma } from "@prisma/client";
 
 /**
  * Register a new user.

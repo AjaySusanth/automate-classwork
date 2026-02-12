@@ -6,17 +6,21 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 ## Feature 0: Foundation (Setup + DB)
 
-- [ ] Create project folders for backend, frontend, n8n-workflows
-- [ ] Initialize backend (npm) and frontend (Vite React)
-- [ ] Install backend dependencies (express, prisma, @prisma/client, jsonwebtoken, bcryptjs, cors, dotenv, node-cron, axios)
-- [ ] Install frontend dependencies (axios, react-router-dom, recharts)
-- [ ] Create Prisma schema with User, Assignment, Reminder, Submission, NotificationLog
-- [ ] Run initial migration and generate Prisma client
+- [x] Create project folders for backend, frontend, n8n-workflows
+- [x] Initialize backend (npm) and frontend (Vite React)
+- [x] Install backend dependencies (express, prisma, @prisma/client, jsonwebtoken, bcryptjs, cors, dotenv, node-cron, axios)
+- [x] Install frontend dependencies (axios, react-router-dom, recharts)
+- [x] Install Tailwind CSS for frontend styling
+- [x] Create Prisma schema with User, Assignment, Reminder, Submission, NotificationLog
+- [x] Run initial migration and generate Prisma client
+- [x] Create frontend folder structure (components, pages, services, context)
+- [x] Add frontend .env.example
 
 **Stop point**
 
-- [ ] Backend server starts
-- [ ] Prisma Studio shows correct tables
+- [x] Backend server starts
+- [x] Prisma Studio shows correct tables
+- [x] Health endpoint returns {"status":"ok","db":"connected"}
 
 ---
 

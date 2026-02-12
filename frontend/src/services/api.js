@@ -38,8 +38,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
-      window.location.href = "/login";
+      const requestUrl = error.config?.url || "";
+      const currentPath = window.location.pathname || "";
+      const isAuthRequest = requestUrl.includes("/auth") || requestUrl.includes("/login");
+      const isLoginPage = currentPath === "/login" || currentPath === "/register";
+
+      if (!isAuthRequest && !isLoginPage) {
+        // Token expired or invalid - redirect to login
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },

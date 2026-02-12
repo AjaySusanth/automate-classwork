@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }) => {
           const data = await getMe();
           setUser(data.user);
         } catch (error) {
-          // Keep stored user data so login persists on refresh/back
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
         }
       }
       setLoading(false);

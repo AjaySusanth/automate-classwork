@@ -58,15 +58,15 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Assignment controller (CRUD)
-- [ ] Role checks (teacher only for write)
-- [ ] Auto-create 24h and 2h reminders on create
-- [ ] Recalculate reminders on due date change
-- [ ] Assignment routes
+- [x] Assignment controller (CRUD)
+- [x] Role checks (teacher only for write)
+- [x] Auto-create 24h and 2h reminders on create
+- [x] Recalculate reminders on due date change
+- [x] Assignment routes
 
 **Stop point**
 
-- [ ] Creating assignment creates reminders in DB
+- [x] Creating assignment creates reminders in DB
 
 **Frontend**
 

@@ -85,12 +85,15 @@ model Submission {
   id           String           @id @default(cuid())
   assignmentId String
   studentId    String
+  content      String?
   status       SubmissionStatus @default(PENDING)
   submittedAt  DateTime?
   createdAt    DateTime         @default(now())
 
   assignment Assignment @relation(fields: [assignmentId], references: [id])
   student    User       @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
 }
 
 model NotificationLog {
@@ -102,6 +105,7 @@ model NotificationLog {
   sentAt       DateTime            @default(now())
   errorMessage String?
 
-  user       User       @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
   assignment Assignment @relation(fields: [assignmentId], references: [id])
 }

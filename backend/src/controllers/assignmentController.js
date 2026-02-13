@@ -92,6 +92,20 @@ export const createAssignment = async (req, res) => {
       const reminders = buildDefaultReminders(assignment.id, parsedDueDate);
       await tx.reminder.createMany({ data: reminders });
 
+      const students = await tx.user.findMany({
+        where: { role: "STUDENT" },
+        select: { id: true },
+      });
+
+      if (students.length > 0) {
+        await tx.submission.createMany({
+          data: students.map((student) => ({
+            assignmentId: assignment.id,
+            studentId: student.id,
+          })),
+        });
+      }
+
       return assignment;
     });
 

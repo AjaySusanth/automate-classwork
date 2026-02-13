@@ -41,30 +41,30 @@ enum NotificationStatus {
 }
 
 model User {
-  id              String        @id @default(cuid())
-  email           String        @unique
-  password        String
-  name            String
-  role            UserRole
-  telegramChatId  String?       @unique
-  telegramLinked  Boolean       @default(false)
-  createdAt       DateTime      @default(now())
+  id             String   @id @default(cuid())
+  email          String   @unique
+  password       String
+  name           String
+  role           UserRole
+  telegramChatId String?  @unique
+  telegramLinked Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
-  assignments     Assignment[]  @relation("AssignmentCreatedBy")
+  assignments     Assignment[]      @relation("AssignmentCreatedBy")
   submissions     Submission[]
   notificationLog NotificationLog[]
 }
 
 model Assignment {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String
   dueDate     DateTime
   createdById String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  createdBy   User         @relation("AssignmentCreatedBy", fields: [createdById], references: [id])
+  createdBy   User              @relation("AssignmentCreatedBy", fields: [createdById], references: [id])
   reminders   Reminder[]
   submissions Submission[]
   logs        NotificationLog[]
@@ -78,19 +78,21 @@ model Reminder {
   sent         Boolean      @default(false)
   createdAt    DateTime     @default(now())
 
-  assignment   Assignment   @relation(fields: [assignmentId], references: [id])
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
 }
 
 model Submission {
   id           String           @id @default(cuid())
   assignmentId String
   studentId    String
+  content      String?
   status       SubmissionStatus @default(PENDING)
   submittedAt  DateTime?
   createdAt    DateTime         @default(now())
 
-  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
-  student      User             @relation(fields: [studentId], references: [id])
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    User       @relation(fields: [studentId], references: [id])
+  @@unique([assignmentId, studentId])
 }
 
 model NotificationLog {
@@ -102,6 +104,7 @@ model NotificationLog {
   sentAt       DateTime            @default(now())
   errorMessage String?
 
-  user         User                @relation(fields: [userId], references: [id])
-  assignment   Assignment          @relation(fields: [assignmentId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
 }

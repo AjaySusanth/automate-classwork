@@ -9,6 +9,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AssignmentList from "./pages/teacher/AssignmentList";
+import AssignmentForm from "./pages/teacher/AssignmentForm";
 
 const HomeRedirect = () => {
   const { user, loading } = useAuth();
@@ -49,33 +51,6 @@ const PublicRoute = ({ children }) => {
   }
 
   return children;
-};
-
-const TeacherDashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  return (
-    <div className="p-8 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
-        >
-          Logout
-        </button>
-      </div>
-      <p className="text-gray-600">Welcome, {user?.name || "Teacher"}.</p>
-      <p className="text-gray-600">Assignment management coming soon...</p>
-    </div>
-  );
 };
 
 const StudentDashboard = () => {
@@ -133,7 +108,23 @@ function App() {
             path="/teacher/assignments"
             element={
               <ProtectedRoute requiredRole="TEACHER">
-                <TeacherDashboard />
+                <AssignmentList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/assignments/new"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <AssignmentForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/assignments/:id/edit"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <AssignmentForm />
               </ProtectedRoute>
             }
           />

@@ -11,6 +11,9 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AssignmentList from "./pages/teacher/AssignmentList";
 import AssignmentForm from "./pages/teacher/AssignmentForm";
+import SubmissionDashboard from "./pages/teacher/SubmissionDashboard";
+import MyAssignments from "./pages/student/MyAssignments";
+import SubmitWork from "./pages/student/SubmitWork";
 
 const HomeRedirect = () => {
   const { user, loading } = useAuth();
@@ -51,33 +54,6 @@ const PublicRoute = ({ children }) => {
   }
 
   return children;
-};
-
-const StudentDashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  return (
-    <div className="p-8 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Student Dashboard</h1>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
-        >
-          Logout
-        </button>
-      </div>
-      <p className="text-gray-600">Welcome, {user?.name || "Student"}.</p>
-      <p className="text-gray-600">Your assignments coming soon...</p>
-    </div>
-  );
 };
 
 function App() {
@@ -128,13 +104,29 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/teacher/submissions"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <SubmissionDashboard />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Student routes - placeholder for now */}
           <Route
             path="/student/assignments"
             element={
               <ProtectedRoute requiredRole="STUDENT">
-                <StudentDashboard />
+                <MyAssignments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/assignments/:assignmentId/submit"
+            element={
+              <ProtectedRoute requiredRole="STUDENT">
+                <SubmitWork />
               </ProtectedRoute>
             }
           />

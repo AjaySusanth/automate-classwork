@@ -59,6 +59,12 @@ export default function AssignmentList() {
             >
               New Assignment
             </Link>
+            <Link
+              to="/teacher/submissions"
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+            >
+              Submissions
+            </Link>
             <button
               type="button"
               onClick={handleLogout}
@@ -84,10 +90,15 @@ export default function AssignmentList() {
         ) : (
           <div className="grid gap-4">
             {assignments.map((assignment) => (
-              <div key={assignment.id} className="rounded-md bg-white p-6 shadow-sm">
+              <div
+                key={assignment.id}
+                className="rounded-md bg-white p-6 shadow-sm"
+              >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-2">
-                    <h2 className="text-lg font-semibold">{assignment.title}</h2>
+                    <h2 className="text-lg font-semibold">
+                      {assignment.title}
+                    </h2>
                     <p className="text-gray-600">{assignment.description}</p>
                     <p className="text-sm text-gray-500">
                       Due: {new Date(assignment.dueDate).toLocaleString()}

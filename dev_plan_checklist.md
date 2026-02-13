@@ -95,13 +95,13 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Frontend**
 
-- [ ] Student assignments list
-- [ ] Student submit form
-- [ ] Teacher submissions view (basic list)
+- [x] Student assignments list
+- [x] Student submit form
+- [x] Teacher submissions view (basic list)
 
 **Integration check**
 
-- [ ] Student submits from UI and status updates for teacher
+- [x] Student submits from UI and status updates for teacher
 
 ---
 

@@ -70,13 +70,13 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Frontend**
 
-- [ ] Assignment list (teacher)
-- [ ] Assignment form (create/edit)
+- [x] Assignment list (teacher)
+- [x] Assignment form (create/edit)
 
 **Integration check**
 
-- [ ] Create assignment in UI and see in list
-- [ ] Reminders exist in DB
+- [x] Create assignment in UI and see in list
+- [x] Reminders exist in DB
 
 ---
 

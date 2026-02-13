@@ -54,22 +54,35 @@ export default function SubmissionDashboard() {
   }, []);
 
   useEffect(() => {
+    let isCurrent = true;
+
     const loadSubmissions = async () => {
       if (!selectedId) {
-        setSubmissions([]);
+        if (isCurrent) {
+          setSubmissions([]);
+        }
         return;
       }
 
       try {
-        setError("");
+        if (isCurrent) {
+          setError("");
+        }
         const data = await fetchSubmissionsByAssignment(selectedId);
-        setSubmissions(data.submissions || []);
+        if (isCurrent) {
+          setSubmissions(data.submissions || []);
+        }
       } catch (err) {
-        setError(err.response?.data?.error || "Failed to load submissions");
+        if (isCurrent) {
+          setError(err.response?.data?.error || "Failed to load submissions");
+        }
       }
     };
 
     loadSubmissions();
+    return () => {
+      isCurrent = false;
+    };
   }, [selectedId]);
 
   const handleLogout = () => {

@@ -14,6 +14,10 @@ export default function SubmitWork() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
+    setError("");
+    setAssignment(null);
+
     const loadAssignment = async () => {
       try {
         const data = await fetchAssignmentById(assignmentId);

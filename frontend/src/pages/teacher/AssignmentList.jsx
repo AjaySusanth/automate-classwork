@@ -30,7 +30,7 @@ export default function AssignmentList() {
     if (!window.confirm("Delete this assignment?")) {
       return;
     }
-
+    setError("");
     try {
       await deleteAssignment(assignmentId);
       setAssignments((prev) => prev.filter((item) => item.id !== assignmentId));

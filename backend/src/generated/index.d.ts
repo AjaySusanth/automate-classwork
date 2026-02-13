@@ -7449,6 +7449,7 @@ export namespace Prisma {
 
   export type SubmissionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    assignmentId_studentId?: SubmissionAssignmentIdStudentIdCompoundUniqueInput
     AND?: SubmissionWhereInput | SubmissionWhereInput[]
     OR?: SubmissionWhereInput[]
     NOT?: SubmissionWhereInput | SubmissionWhereInput[]
@@ -7460,7 +7461,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Submission"> | Date | string
     assignment?: XOR<AssignmentScalarRelationFilter, AssignmentWhereInput>
     student?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "assignmentId_studentId">
 
   export type SubmissionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -8223,6 +8224,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type SubmissionAssignmentIdStudentIdCompoundUniqueInput = {
+    assignmentId: string
+    studentId: string
   }
 
   export type SubmissionCountOrderByAggregateInput = {

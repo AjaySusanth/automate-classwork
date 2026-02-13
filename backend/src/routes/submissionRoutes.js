@@ -16,12 +16,12 @@ router.get(
   requireRole("TEACHER"),
   listSubmissionsByAssignment,
 );
+router.get("/my", authenticate, requireRole("STUDENT"), listMySubmissions);
 router.post(
   "/:assignmentId",
   authenticate,
   requireRole("STUDENT"),
   submitAssignment,
 );
-router.get("/my", authenticate, requireRole("STUDENT"), listMySubmissions);
 
 export default router;

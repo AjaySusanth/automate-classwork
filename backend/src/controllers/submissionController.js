@@ -1,5 +1,6 @@
 import prisma from "../config/db.config.js";
 
+
 const getSubmissionStatus = (submittedAt, dueDate) => {
   return submittedAt > dueDate ? "LATE" : "SUBMITTED";
 };
@@ -80,26 +81,8 @@ export const submitAssignment = async (req, res) => {
     const submittedAt = new Date();
     const status = getSubmissionStatus(submittedAt, assignment.dueDate);
 
-    const existingSubmission = await prisma.submission.findFirst({
-      where: {
-        assignmentId,
-        studentId: req.user.id,
-      },
-    });
-
-    let submission;
-
-    if (existingSubmission) {
-      submission = await prisma.submission.update({
-        where: { id: existingSubmission.id },
-        data: {
-          content,
-          status,
-          submittedAt,
-        },
-      });
-    } else {
-      submission = await prisma.submission.create({
+    try {
+      const submission = await prisma.submission.create({
         data: {
           assignmentId,
           studentId: req.user.id,
@@ -108,9 +91,29 @@ export const submitAssignment = async (req, res) => {
           submittedAt,
         },
       });
-    }
 
-    res.status(201).json({ submission });
+      return res.status(201).json({ submission });
+    } catch (error) {
+      if (error?.code === "P2002") {
+        const submission = await prisma.submission.update({
+          where: {
+            assignmentId_studentId: {
+              assignmentId,
+              studentId: req.user.id,
+            },
+          },
+          data: {
+            content,
+            status,
+            submittedAt,
+          },
+        });
+
+        return res.status(200).json({ submission });
+      }
+
+      throw error;
+    }
   } catch (error) {
     console.error("Submit assignment error:", error);
     res.status(500).json({ error: "Failed to submit assignment" });

@@ -84,14 +84,14 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Submission controller (submit, list, by assignment, my submissions)
-- [ ] Auto-mark late submissions
-- [ ] (Optional) Create PENDING entries for all students on assignment creation
-- [ ] Submission routes
+- [x] Submission controller (submit, list, by assignment, my submissions)
+- [x] Auto-mark late submissions
+- [x] (Optional) Create PENDING entries for all students on assignment creation
+- [x] Submission routes
 
 **Stop point**
 
-- [ ] Late submissions marked correctly
+- [x] Late submissions marked correctly
 
 **Frontend**
 

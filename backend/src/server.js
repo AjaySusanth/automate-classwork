@@ -5,6 +5,7 @@ import prisma from "./config/db.config.js";
 import authRoutes from "./routes/authRoutes.js";
 import assignmentRoutes from "./routes/assignmentRoutes.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/health", async (req, res) => {
   try {

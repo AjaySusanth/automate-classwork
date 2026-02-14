@@ -6036,7 +6036,7 @@ export namespace Prisma {
   export type NotificationLogGroupByOutputType = {
     id: string
     userId: string
-    assignmentId: string
+    assignmentId: string | null
     channel: $Enums.NotificationChannel
     status: $Enums.NotificationStatus
     sentAt: Date
@@ -6069,7 +6069,7 @@ export namespace Prisma {
     sentAt?: boolean
     errorMessage?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }, ExtArgs["result"]["notificationLog"]>
 
   export type NotificationLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6081,7 +6081,7 @@ export namespace Prisma {
     sentAt?: boolean
     errorMessage?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }, ExtArgs["result"]["notificationLog"]>
 
   export type NotificationLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6093,7 +6093,7 @@ export namespace Prisma {
     sentAt?: boolean
     errorMessage?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }, ExtArgs["result"]["notificationLog"]>
 
   export type NotificationLogSelectScalar = {
@@ -6109,27 +6109,27 @@ export namespace Prisma {
   export type NotificationLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "assignmentId" | "channel" | "status" | "sentAt" | "errorMessage", ExtArgs["result"]["notificationLog"]>
   export type NotificationLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }
   export type NotificationLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }
   export type NotificationLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
+    assignment?: boolean | NotificationLog$assignmentArgs<ExtArgs>
   }
 
   export type $NotificationLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "NotificationLog"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      assignment: Prisma.$AssignmentPayload<ExtArgs>
+      assignment: Prisma.$AssignmentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      assignmentId: string
+      assignmentId: string | null
       channel: $Enums.NotificationChannel
       status: $Enums.NotificationStatus
       sentAt: Date
@@ -6529,7 +6529,7 @@ export namespace Prisma {
   export interface Prisma__NotificationLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    assignment<T extends AssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AssignmentDefaultArgs<ExtArgs>>): Prisma__AssignmentClient<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    assignment<T extends NotificationLog$assignmentArgs<ExtArgs> = {}>(args?: Subset<T, NotificationLog$assignmentArgs<ExtArgs>>): Prisma__AssignmentClient<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6959,6 +6959,25 @@ export namespace Prisma {
      * Limit how many NotificationLogs to delete.
      */
     limit?: number
+  }
+
+  /**
+   * NotificationLog.assignment
+   */
+  export type NotificationLog$assignmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assignment
+     */
+    select?: AssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assignment
+     */
+    omit?: AssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssignmentInclude<ExtArgs> | null
+    where?: AssignmentWhereInput
   }
 
   /**
@@ -7495,19 +7514,19 @@ export namespace Prisma {
     NOT?: NotificationLogWhereInput | NotificationLogWhereInput[]
     id?: StringFilter<"NotificationLog"> | string
     userId?: StringFilter<"NotificationLog"> | string
-    assignmentId?: StringFilter<"NotificationLog"> | string
+    assignmentId?: StringNullableFilter<"NotificationLog"> | string | null
     channel?: EnumNotificationChannelFilter<"NotificationLog"> | $Enums.NotificationChannel
     status?: EnumNotificationStatusFilter<"NotificationLog"> | $Enums.NotificationStatus
     sentAt?: DateTimeFilter<"NotificationLog"> | Date | string
     errorMessage?: StringNullableFilter<"NotificationLog"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    assignment?: XOR<AssignmentScalarRelationFilter, AssignmentWhereInput>
+    assignment?: XOR<AssignmentNullableScalarRelationFilter, AssignmentWhereInput> | null
   }
 
   export type NotificationLogOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    assignmentId?: SortOrder
+    assignmentId?: SortOrderInput | SortOrder
     channel?: SortOrder
     status?: SortOrder
     sentAt?: SortOrder
@@ -7522,19 +7541,19 @@ export namespace Prisma {
     OR?: NotificationLogWhereInput[]
     NOT?: NotificationLogWhereInput | NotificationLogWhereInput[]
     userId?: StringFilter<"NotificationLog"> | string
-    assignmentId?: StringFilter<"NotificationLog"> | string
+    assignmentId?: StringNullableFilter<"NotificationLog"> | string | null
     channel?: EnumNotificationChannelFilter<"NotificationLog"> | $Enums.NotificationChannel
     status?: EnumNotificationStatusFilter<"NotificationLog"> | $Enums.NotificationStatus
     sentAt?: DateTimeFilter<"NotificationLog"> | Date | string
     errorMessage?: StringNullableFilter<"NotificationLog"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    assignment?: XOR<AssignmentScalarRelationFilter, AssignmentWhereInput>
+    assignment?: XOR<AssignmentNullableScalarRelationFilter, AssignmentWhereInput> | null
   }, "id">
 
   export type NotificationLogOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    assignmentId?: SortOrder
+    assignmentId?: SortOrderInput | SortOrder
     channel?: SortOrder
     status?: SortOrder
     sentAt?: SortOrder
@@ -7550,7 +7569,7 @@ export namespace Prisma {
     NOT?: NotificationLogScalarWhereWithAggregatesInput | NotificationLogScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"NotificationLog"> | string
     userId?: StringWithAggregatesFilter<"NotificationLog"> | string
-    assignmentId?: StringWithAggregatesFilter<"NotificationLog"> | string
+    assignmentId?: StringNullableWithAggregatesFilter<"NotificationLog"> | string | null
     channel?: EnumNotificationChannelWithAggregatesFilter<"NotificationLog"> | $Enums.NotificationChannel
     status?: EnumNotificationStatusWithAggregatesFilter<"NotificationLog"> | $Enums.NotificationStatus
     sentAt?: DateTimeWithAggregatesFilter<"NotificationLog"> | Date | string
@@ -7864,13 +7883,13 @@ export namespace Prisma {
     sentAt?: Date | string
     errorMessage?: string | null
     user: UserCreateNestedOneWithoutNotificationLogInput
-    assignment: AssignmentCreateNestedOneWithoutLogsInput
+    assignment?: AssignmentCreateNestedOneWithoutLogsInput
   }
 
   export type NotificationLogUncheckedCreateInput = {
     id?: string
     userId: string
-    assignmentId: string
+    assignmentId?: string | null
     channel: $Enums.NotificationChannel
     status: $Enums.NotificationStatus
     sentAt?: Date | string
@@ -7884,13 +7903,13 @@ export namespace Prisma {
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutNotificationLogNestedInput
-    assignment?: AssignmentUpdateOneRequiredWithoutLogsNestedInput
+    assignment?: AssignmentUpdateOneWithoutLogsNestedInput
   }
 
   export type NotificationLogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    assignmentId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: NullableStringFieldUpdateOperationsInput | string | null
     channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7900,7 +7919,7 @@ export namespace Prisma {
   export type NotificationLogCreateManyInput = {
     id?: string
     userId: string
-    assignmentId: string
+    assignmentId?: string | null
     channel: $Enums.NotificationChannel
     status: $Enums.NotificationStatus
     sentAt?: Date | string
@@ -7918,7 +7937,7 @@ export namespace Prisma {
   export type NotificationLogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    assignmentId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: NullableStringFieldUpdateOperationsInput | string | null
     channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8297,6 +8316,11 @@ export namespace Prisma {
     in?: $Enums.NotificationStatus[] | ListEnumNotificationStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.NotificationStatus[] | ListEnumNotificationStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumNotificationStatusFilter<$PrismaModel> | $Enums.NotificationStatus
+  }
+
+  export type AssignmentNullableScalarRelationFilter = {
+    is?: AssignmentWhereInput | null
+    isNot?: AssignmentWhereInput | null
   }
 
   export type NotificationLogCountOrderByAggregateInput = {
@@ -8717,10 +8741,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationLogInput, UserUpdateWithoutNotificationLogInput>, UserUncheckedUpdateWithoutNotificationLogInput>
   }
 
-  export type AssignmentUpdateOneRequiredWithoutLogsNestedInput = {
+  export type AssignmentUpdateOneWithoutLogsNestedInput = {
     create?: XOR<AssignmentCreateWithoutLogsInput, AssignmentUncheckedCreateWithoutLogsInput>
     connectOrCreate?: AssignmentCreateOrConnectWithoutLogsInput
     upsert?: AssignmentUpsertWithoutLogsInput
+    disconnect?: AssignmentWhereInput | boolean
+    delete?: AssignmentWhereInput | boolean
     connect?: AssignmentWhereUniqueInput
     update?: XOR<XOR<AssignmentUpdateToOneWithWhereWithoutLogsInput, AssignmentUpdateWithoutLogsInput>, AssignmentUncheckedUpdateWithoutLogsInput>
   }
@@ -9025,12 +9051,12 @@ export namespace Prisma {
     status: $Enums.NotificationStatus
     sentAt?: Date | string
     errorMessage?: string | null
-    assignment: AssignmentCreateNestedOneWithoutLogsInput
+    assignment?: AssignmentCreateNestedOneWithoutLogsInput
   }
 
   export type NotificationLogUncheckedCreateWithoutUserInput = {
     id?: string
-    assignmentId: string
+    assignmentId?: string | null
     channel: $Enums.NotificationChannel
     status: $Enums.NotificationStatus
     sentAt?: Date | string
@@ -9127,7 +9153,7 @@ export namespace Prisma {
     NOT?: NotificationLogScalarWhereInput | NotificationLogScalarWhereInput[]
     id?: StringFilter<"NotificationLog"> | string
     userId?: StringFilter<"NotificationLog"> | string
-    assignmentId?: StringFilter<"NotificationLog"> | string
+    assignmentId?: StringNullableFilter<"NotificationLog"> | string | null
     channel?: EnumNotificationChannelFilter<"NotificationLog"> | $Enums.NotificationChannel
     status?: EnumNotificationStatusFilter<"NotificationLog"> | $Enums.NotificationStatus
     sentAt?: DateTimeFilter<"NotificationLog"> | Date | string
@@ -9692,7 +9718,7 @@ export namespace Prisma {
 
   export type NotificationLogCreateManyUserInput = {
     id?: string
-    assignmentId: string
+    assignmentId?: string | null
     channel: $Enums.NotificationChannel
     status: $Enums.NotificationStatus
     sentAt?: Date | string
@@ -9765,12 +9791,12 @@ export namespace Prisma {
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    assignment?: AssignmentUpdateOneRequiredWithoutLogsNestedInput
+    assignment?: AssignmentUpdateOneWithoutLogsNestedInput
   }
 
   export type NotificationLogUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    assignmentId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: NullableStringFieldUpdateOperationsInput | string | null
     channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9779,7 +9805,7 @@ export namespace Prisma {
 
   export type NotificationLogUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    assignmentId?: StringFieldUpdateOperationsInput | string
+    assignmentId?: NullableStringFieldUpdateOperationsInput | string | null
     channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string

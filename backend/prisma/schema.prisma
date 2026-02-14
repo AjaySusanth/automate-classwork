@@ -92,19 +92,20 @@ model Submission {
 
   assignment Assignment @relation(fields: [assignmentId], references: [id])
   student    User       @relation(fields: [studentId], references: [id])
+
   @@unique([assignmentId, studentId])
 }
 
 model NotificationLog {
   id           String              @id @default(cuid())
   userId       String
-  assignmentId String
+  assignmentId String?
   channel      NotificationChannel
   status       NotificationStatus
   sentAt       DateTime            @default(now())
   errorMessage String?
 
-  user       User       @relation(fields: [userId], references: [id])
-  
-  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  assignment Assignment? @relation(fields: [assignmentId], references: [id])
 }

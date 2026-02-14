@@ -109,16 +109,16 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Create NotificationChannel base interface
-- [ ] Implement TelegramChannel
-- [ ] Implement NotificationService registry
-- [ ] Log notifications to DB
+- [x] Create NotificationChannel base interface
+- [x] Implement TelegramChannel
+- [x] Implement NotificationService registry
+- [x] Log notifications to DB
 - [ ] Add WhatsAppChannel stub
 
 **Stop point**
 
-- [ ] Test send creates NotificationLog entry
-- [ ] Telegram send succeeds
+- [x] Test send creates NotificationLog entry
+- [x] Telegram send succeeds
 
 **Frontend**
 

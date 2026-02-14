@@ -10,8 +10,15 @@ export default class NotificationService {
   }
 
   async send(user, message, channelName, assignmentId) {
-    const channel = channelName
-      ? this.channels.get(channelName)
+      if (!user?.id) {
+        throw new Error("User not found");
+      }
+    
+    const normalizedName = channelName
+      ? String(channelName).trim().toLowerCase()
+      : null;
+    const channel = normalizedName
+      ? this.channels.get(normalizedName)
       : this.channels.values().next().value;
 
     if (!channel) {

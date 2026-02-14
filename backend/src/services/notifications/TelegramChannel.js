@@ -22,10 +22,19 @@ export default class TelegramChannel extends NotificationChannel {
 
     const url = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
 
-    await axios.post(url, {
-      chat_id: user.telegramChatId,
-      text: message,
-    });
+    const response = await axios.post(
+      url,
+      {
+        chat_id: user.telegramChatId,
+        text: message,
+      },
+      { timeout: 5000 },
+    );
+
+    if (!response?.data?.ok) {
+      const details = response?.data?.description || "Telegram send failed";
+      throw new Error(details);
+    }
 
     return true;
   }

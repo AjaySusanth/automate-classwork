@@ -21,6 +21,7 @@ export const getDueReminders = async (req, res) => {
         sent: false,
         reminderTime: { lte: now },
         assignment: {
+          createdById: req.user.id,
           submissions: {
             some: {
               status: "PENDING",
@@ -91,9 +92,16 @@ export const markReminderSent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const reminder = await prisma.reminder.findUnique({ where: { id } });
+    const reminder = await prisma.reminder.findUnique({
+      where: { id },
+      include: { assignment: { select: { createdById: true } } },
+    });
     if (!reminder) {
       return res.status(404).json({ error: "Reminder not found" });
+    }
+
+    if (reminder.assignment?.createdById !== req.user.id) {
+      return res.status(403).json({ error: "Access denied" });
     }
 
     const updated = await prisma.reminder.update({

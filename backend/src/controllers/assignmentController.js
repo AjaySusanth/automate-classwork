@@ -1,4 +1,27 @@
+import axios from "axios";
 import prisma from "../config/db.config.js";
+
+const notifyN8nAssignmentCreated = async (assignment) => {
+  const webhookUrl = process.env.N8N_WEBHOOK_URL;
+
+  if (!webhookUrl) {
+    return;
+  }
+
+  const payload = {
+    id: assignment.id,
+    title: assignment.title,
+    description: assignment.description,
+    dueDate: assignment.dueDate?.toISOString?.() ?? assignment.dueDate,
+    createdById: assignment.createdById,
+  };
+
+  try {
+    await axios.post(webhookUrl, payload, { timeout: 5000 });
+  } catch (error) {
+    console.error("n8n webhook failed:", error?.message || error);
+  }
+};
 
 const parseDueDate = (dueDate) => {
   const date = new Date(dueDate);
@@ -109,6 +132,7 @@ export const createAssignment = async (req, res) => {
       return assignment;
     });
 
+    await notifyN8nAssignmentCreated(result);
     res.status(201).json({ assignment: result });
   } catch (error) {
     console.error("Create assignment error:", error);

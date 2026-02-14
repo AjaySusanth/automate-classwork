@@ -130,22 +130,25 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Webhook endpoints: pending students, due reminders, log notification
+- [x] Endpoint: pending students (telegram linked)
+- [x] Endpoint: due reminders
+- [x] Endpoint: mark reminder sent
+- [ ] Endpoint: log notification
 
 **Stop point**
 
-- [ ] Webhook endpoints return correct data
+- [x] Webhook endpoints return correct data
 
 **n8n**
 
-- [ ] New assignment notification workflow
-- [ ] Scheduled reminders workflow
-- [ ] Workflow README for setup
+- [x] New assignment notification workflow
+- [x] Scheduled reminders workflow
+- [x] Workflow README for setup
 
 **Integration check**
 
-- [ ] Creating assignment triggers student notifications
-- [ ] Reminders sent only to pending students
+- [x] Creating assignment triggers student notifications
+- [x] Reminders sent only to pending students
 
 ---
 

@@ -6,6 +6,8 @@ import authRoutes from "./routes/authRoutes.js";
 import assignmentRoutes from "./routes/assignmentRoutes.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import reminderRoutes from "./routes/reminderRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/reminders", reminderRoutes);
 
 app.get("/health", async (req, res) => {
   try {
@@ -30,7 +34,7 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening on port ${port}`);
 });
 

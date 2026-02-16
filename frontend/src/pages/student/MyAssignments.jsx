@@ -60,13 +60,21 @@ export default function MyAssignments() {
             <h1 className="text-2xl font-bold">My Assignments</h1>
             <p className="text-gray-600">Welcome, {user?.name || "Student"}.</p>
           </div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
-          >
-            Logout
-          </button>
+          <div className="flex gap-3">
+            <Link
+              to="/student/link-telegram"
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Link Telegram
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {error && (

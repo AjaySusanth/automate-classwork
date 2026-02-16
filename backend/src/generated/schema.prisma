@@ -50,9 +50,23 @@ model User {
   telegramLinked Boolean  @default(false)
   createdAt      DateTime @default(now())
 
-  assignments     Assignment[]      @relation("AssignmentCreatedBy")
+  assignments     Assignment[]        @relation("AssignmentCreatedBy")
   submissions     Submission[]
   notificationLog NotificationLog[]
+  telegramTokens  TelegramLinkToken[]
+}
+
+model TelegramLinkToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Assignment {

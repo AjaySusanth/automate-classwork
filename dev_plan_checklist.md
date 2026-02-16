@@ -156,20 +156,22 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Backend first**
 
-- [ ] Link token generation endpoint
-- [ ] Link chatId endpoint
-- [ ] Token storage and expiry
-- [ ] Prevent duplicate chatId links
+- [x] Link token generation endpoint
+- [x] Link chatId endpoint
+- [x] Token storage and expiry
+- [x] Prevent duplicate chatId links
+- [ ] Include Telegram deep link in link-token response (UX)
 
 **Stop point**
 
-- [ ] Token expires correctly
-- [ ] ChatId links to correct user
+- [x] Token expires correctly
+- [x] ChatId links to correct user
 
 **n8n**
 
-- [ ] Telegram /start handler workflow
-- [ ] Bot replies with link URL
+- [x] Telegram /start handler workflow (tested)
+- [x] Bot replies with link URL
+- [x] Error handling with user-friendly messages
 
 **Frontend**
 

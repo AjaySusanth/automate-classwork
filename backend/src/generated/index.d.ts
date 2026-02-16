@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model TelegramLinkToken
+ * 
+ */
+export type TelegramLinkToken = $Result.DefaultSelection<Prisma.$TelegramLinkTokenPayload>
+/**
  * Model Assignment
  * 
  */
@@ -232,6 +237,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.telegramLinkToken`: Exposes CRUD operations for the **TelegramLinkToken** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TelegramLinkTokens
+    * const telegramLinkTokens = await prisma.telegramLinkToken.findMany()
+    * ```
+    */
+  get telegramLinkToken(): Prisma.TelegramLinkTokenDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.assignment`: Exposes CRUD operations for the **Assignment** model.
@@ -707,6 +722,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    TelegramLinkToken: 'TelegramLinkToken',
     Assignment: 'Assignment',
     Reminder: 'Reminder',
     Submission: 'Submission',
@@ -726,7 +742,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "assignment" | "reminder" | "submission" | "notificationLog"
+      modelProps: "user" | "telegramLinkToken" | "assignment" | "reminder" | "submission" | "notificationLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -801,6 +817,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      TelegramLinkToken: {
+        payload: Prisma.$TelegramLinkTokenPayload<ExtArgs>
+        fields: Prisma.TelegramLinkTokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TelegramLinkTokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TelegramLinkTokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          findFirst: {
+            args: Prisma.TelegramLinkTokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TelegramLinkTokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          findMany: {
+            args: Prisma.TelegramLinkTokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>[]
+          }
+          create: {
+            args: Prisma.TelegramLinkTokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          createMany: {
+            args: Prisma.TelegramLinkTokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TelegramLinkTokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>[]
+          }
+          delete: {
+            args: Prisma.TelegramLinkTokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          update: {
+            args: Prisma.TelegramLinkTokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.TelegramLinkTokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TelegramLinkTokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TelegramLinkTokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.TelegramLinkTokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramLinkTokenPayload>
+          }
+          aggregate: {
+            args: Prisma.TelegramLinkTokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTelegramLinkToken>
+          }
+          groupBy: {
+            args: Prisma.TelegramLinkTokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TelegramLinkTokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TelegramLinkTokenCountArgs<ExtArgs>
+            result: $Utils.Optional<TelegramLinkTokenCountAggregateOutputType> | number
           }
         }
       }
@@ -1209,6 +1299,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    telegramLinkToken?: TelegramLinkTokenOmit
     assignment?: AssignmentOmit
     reminder?: ReminderOmit
     submission?: SubmissionOmit
@@ -1296,12 +1387,14 @@ export namespace Prisma {
     assignments: number
     submissions: number
     notificationLog: number
+    telegramTokens: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assignments?: boolean | UserCountOutputTypeCountAssignmentsArgs
     submissions?: boolean | UserCountOutputTypeCountSubmissionsArgs
     notificationLog?: boolean | UserCountOutputTypeCountNotificationLogArgs
+    telegramTokens?: boolean | UserCountOutputTypeCountTelegramTokensArgs
   }
 
   // Custom InputTypes
@@ -1334,6 +1427,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTelegramTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TelegramLinkTokenWhereInput
   }
 
 
@@ -1581,6 +1681,7 @@ export namespace Prisma {
     assignments?: boolean | User$assignmentsArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     notificationLog?: boolean | User$notificationLogArgs<ExtArgs>
+    telegramTokens?: boolean | User$telegramTokensArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1622,6 +1723,7 @@ export namespace Prisma {
     assignments?: boolean | User$assignmentsArgs<ExtArgs>
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     notificationLog?: boolean | User$notificationLogArgs<ExtArgs>
+    telegramTokens?: boolean | User$telegramTokensArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1633,6 +1735,7 @@ export namespace Prisma {
       assignments: Prisma.$AssignmentPayload<ExtArgs>[]
       submissions: Prisma.$SubmissionPayload<ExtArgs>[]
       notificationLog: Prisma.$NotificationLogPayload<ExtArgs>[]
+      telegramTokens: Prisma.$TelegramLinkTokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2040,6 +2143,7 @@ export namespace Prisma {
     assignments<T extends User$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     submissions<T extends User$submissionsArgs<ExtArgs> = {}>(args?: Subset<T, User$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificationLog<T extends User$notificationLogArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationLogArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    telegramTokens<T extends User$telegramTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$telegramTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2537,6 +2641,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.telegramTokens
+   */
+  export type User$telegramTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    where?: TelegramLinkTokenWhereInput
+    orderBy?: TelegramLinkTokenOrderByWithRelationInput | TelegramLinkTokenOrderByWithRelationInput[]
+    cursor?: TelegramLinkTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TelegramLinkTokenScalarFieldEnum | TelegramLinkTokenScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2552,6 +2680,1077 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TelegramLinkToken
+   */
+
+  export type AggregateTelegramLinkToken = {
+    _count: TelegramLinkTokenCountAggregateOutputType | null
+    _min: TelegramLinkTokenMinAggregateOutputType | null
+    _max: TelegramLinkTokenMaxAggregateOutputType | null
+  }
+
+  export type TelegramLinkTokenMinAggregateOutputType = {
+    id: string | null
+    token: string | null
+    userId: string | null
+    expiresAt: Date | null
+    usedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type TelegramLinkTokenMaxAggregateOutputType = {
+    id: string | null
+    token: string | null
+    userId: string | null
+    expiresAt: Date | null
+    usedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type TelegramLinkTokenCountAggregateOutputType = {
+    id: number
+    token: number
+    userId: number
+    expiresAt: number
+    usedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TelegramLinkTokenMinAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    usedAt?: true
+    createdAt?: true
+  }
+
+  export type TelegramLinkTokenMaxAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    usedAt?: true
+    createdAt?: true
+  }
+
+  export type TelegramLinkTokenCountAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    usedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TelegramLinkTokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TelegramLinkToken to aggregate.
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramLinkTokens to fetch.
+     */
+    orderBy?: TelegramLinkTokenOrderByWithRelationInput | TelegramLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TelegramLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TelegramLinkTokens
+    **/
+    _count?: true | TelegramLinkTokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TelegramLinkTokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TelegramLinkTokenMaxAggregateInputType
+  }
+
+  export type GetTelegramLinkTokenAggregateType<T extends TelegramLinkTokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateTelegramLinkToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTelegramLinkToken[P]>
+      : GetScalarType<T[P], AggregateTelegramLinkToken[P]>
+  }
+
+
+
+
+  export type TelegramLinkTokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TelegramLinkTokenWhereInput
+    orderBy?: TelegramLinkTokenOrderByWithAggregationInput | TelegramLinkTokenOrderByWithAggregationInput[]
+    by: TelegramLinkTokenScalarFieldEnum[] | TelegramLinkTokenScalarFieldEnum
+    having?: TelegramLinkTokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TelegramLinkTokenCountAggregateInputType | true
+    _min?: TelegramLinkTokenMinAggregateInputType
+    _max?: TelegramLinkTokenMaxAggregateInputType
+  }
+
+  export type TelegramLinkTokenGroupByOutputType = {
+    id: string
+    token: string
+    userId: string
+    expiresAt: Date
+    usedAt: Date | null
+    createdAt: Date
+    _count: TelegramLinkTokenCountAggregateOutputType | null
+    _min: TelegramLinkTokenMinAggregateOutputType | null
+    _max: TelegramLinkTokenMaxAggregateOutputType | null
+  }
+
+  type GetTelegramLinkTokenGroupByPayload<T extends TelegramLinkTokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TelegramLinkTokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TelegramLinkTokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TelegramLinkTokenGroupByOutputType[P]>
+            : GetScalarType<T[P], TelegramLinkTokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TelegramLinkTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["telegramLinkToken"]>
+
+  export type TelegramLinkTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["telegramLinkToken"]>
+
+  export type TelegramLinkTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["telegramLinkToken"]>
+
+  export type TelegramLinkTokenSelectScalar = {
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    usedAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type TelegramLinkTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "userId" | "expiresAt" | "usedAt" | "createdAt", ExtArgs["result"]["telegramLinkToken"]>
+  export type TelegramLinkTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TelegramLinkTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TelegramLinkTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $TelegramLinkTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TelegramLinkToken"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      token: string
+      userId: string
+      expiresAt: Date
+      usedAt: Date | null
+      createdAt: Date
+    }, ExtArgs["result"]["telegramLinkToken"]>
+    composites: {}
+  }
+
+  type TelegramLinkTokenGetPayload<S extends boolean | null | undefined | TelegramLinkTokenDefaultArgs> = $Result.GetResult<Prisma.$TelegramLinkTokenPayload, S>
+
+  type TelegramLinkTokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TelegramLinkTokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TelegramLinkTokenCountAggregateInputType | true
+    }
+
+  export interface TelegramLinkTokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TelegramLinkToken'], meta: { name: 'TelegramLinkToken' } }
+    /**
+     * Find zero or one TelegramLinkToken that matches the filter.
+     * @param {TelegramLinkTokenFindUniqueArgs} args - Arguments to find a TelegramLinkToken
+     * @example
+     * // Get one TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TelegramLinkTokenFindUniqueArgs>(args: SelectSubset<T, TelegramLinkTokenFindUniqueArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TelegramLinkToken that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TelegramLinkTokenFindUniqueOrThrowArgs} args - Arguments to find a TelegramLinkToken
+     * @example
+     * // Get one TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TelegramLinkTokenFindUniqueOrThrowArgs>(args: SelectSubset<T, TelegramLinkTokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TelegramLinkToken that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenFindFirstArgs} args - Arguments to find a TelegramLinkToken
+     * @example
+     * // Get one TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TelegramLinkTokenFindFirstArgs>(args?: SelectSubset<T, TelegramLinkTokenFindFirstArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TelegramLinkToken that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenFindFirstOrThrowArgs} args - Arguments to find a TelegramLinkToken
+     * @example
+     * // Get one TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TelegramLinkTokenFindFirstOrThrowArgs>(args?: SelectSubset<T, TelegramLinkTokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TelegramLinkTokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TelegramLinkTokens
+     * const telegramLinkTokens = await prisma.telegramLinkToken.findMany()
+     * 
+     * // Get first 10 TelegramLinkTokens
+     * const telegramLinkTokens = await prisma.telegramLinkToken.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const telegramLinkTokenWithIdOnly = await prisma.telegramLinkToken.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TelegramLinkTokenFindManyArgs>(args?: SelectSubset<T, TelegramLinkTokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TelegramLinkToken.
+     * @param {TelegramLinkTokenCreateArgs} args - Arguments to create a TelegramLinkToken.
+     * @example
+     * // Create one TelegramLinkToken
+     * const TelegramLinkToken = await prisma.telegramLinkToken.create({
+     *   data: {
+     *     // ... data to create a TelegramLinkToken
+     *   }
+     * })
+     * 
+     */
+    create<T extends TelegramLinkTokenCreateArgs>(args: SelectSubset<T, TelegramLinkTokenCreateArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TelegramLinkTokens.
+     * @param {TelegramLinkTokenCreateManyArgs} args - Arguments to create many TelegramLinkTokens.
+     * @example
+     * // Create many TelegramLinkTokens
+     * const telegramLinkToken = await prisma.telegramLinkToken.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TelegramLinkTokenCreateManyArgs>(args?: SelectSubset<T, TelegramLinkTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TelegramLinkTokens and returns the data saved in the database.
+     * @param {TelegramLinkTokenCreateManyAndReturnArgs} args - Arguments to create many TelegramLinkTokens.
+     * @example
+     * // Create many TelegramLinkTokens
+     * const telegramLinkToken = await prisma.telegramLinkToken.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TelegramLinkTokens and only return the `id`
+     * const telegramLinkTokenWithIdOnly = await prisma.telegramLinkToken.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TelegramLinkTokenCreateManyAndReturnArgs>(args?: SelectSubset<T, TelegramLinkTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TelegramLinkToken.
+     * @param {TelegramLinkTokenDeleteArgs} args - Arguments to delete one TelegramLinkToken.
+     * @example
+     * // Delete one TelegramLinkToken
+     * const TelegramLinkToken = await prisma.telegramLinkToken.delete({
+     *   where: {
+     *     // ... filter to delete one TelegramLinkToken
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TelegramLinkTokenDeleteArgs>(args: SelectSubset<T, TelegramLinkTokenDeleteArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TelegramLinkToken.
+     * @param {TelegramLinkTokenUpdateArgs} args - Arguments to update one TelegramLinkToken.
+     * @example
+     * // Update one TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TelegramLinkTokenUpdateArgs>(args: SelectSubset<T, TelegramLinkTokenUpdateArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TelegramLinkTokens.
+     * @param {TelegramLinkTokenDeleteManyArgs} args - Arguments to filter TelegramLinkTokens to delete.
+     * @example
+     * // Delete a few TelegramLinkTokens
+     * const { count } = await prisma.telegramLinkToken.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TelegramLinkTokenDeleteManyArgs>(args?: SelectSubset<T, TelegramLinkTokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TelegramLinkTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TelegramLinkTokens
+     * const telegramLinkToken = await prisma.telegramLinkToken.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TelegramLinkTokenUpdateManyArgs>(args: SelectSubset<T, TelegramLinkTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TelegramLinkTokens and returns the data updated in the database.
+     * @param {TelegramLinkTokenUpdateManyAndReturnArgs} args - Arguments to update many TelegramLinkTokens.
+     * @example
+     * // Update many TelegramLinkTokens
+     * const telegramLinkToken = await prisma.telegramLinkToken.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TelegramLinkTokens and only return the `id`
+     * const telegramLinkTokenWithIdOnly = await prisma.telegramLinkToken.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TelegramLinkTokenUpdateManyAndReturnArgs>(args: SelectSubset<T, TelegramLinkTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TelegramLinkToken.
+     * @param {TelegramLinkTokenUpsertArgs} args - Arguments to update or create a TelegramLinkToken.
+     * @example
+     * // Update or create a TelegramLinkToken
+     * const telegramLinkToken = await prisma.telegramLinkToken.upsert({
+     *   create: {
+     *     // ... data to create a TelegramLinkToken
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TelegramLinkToken we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TelegramLinkTokenUpsertArgs>(args: SelectSubset<T, TelegramLinkTokenUpsertArgs<ExtArgs>>): Prisma__TelegramLinkTokenClient<$Result.GetResult<Prisma.$TelegramLinkTokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TelegramLinkTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenCountArgs} args - Arguments to filter TelegramLinkTokens to count.
+     * @example
+     * // Count the number of TelegramLinkTokens
+     * const count = await prisma.telegramLinkToken.count({
+     *   where: {
+     *     // ... the filter for the TelegramLinkTokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends TelegramLinkTokenCountArgs>(
+      args?: Subset<T, TelegramLinkTokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TelegramLinkTokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TelegramLinkToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TelegramLinkTokenAggregateArgs>(args: Subset<T, TelegramLinkTokenAggregateArgs>): Prisma.PrismaPromise<GetTelegramLinkTokenAggregateType<T>>
+
+    /**
+     * Group by TelegramLinkToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramLinkTokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TelegramLinkTokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TelegramLinkTokenGroupByArgs['orderBy'] }
+        : { orderBy?: TelegramLinkTokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TelegramLinkTokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTelegramLinkTokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TelegramLinkToken model
+   */
+  readonly fields: TelegramLinkTokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TelegramLinkToken.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TelegramLinkTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TelegramLinkToken model
+   */
+  interface TelegramLinkTokenFieldRefs {
+    readonly id: FieldRef<"TelegramLinkToken", 'String'>
+    readonly token: FieldRef<"TelegramLinkToken", 'String'>
+    readonly userId: FieldRef<"TelegramLinkToken", 'String'>
+    readonly expiresAt: FieldRef<"TelegramLinkToken", 'DateTime'>
+    readonly usedAt: FieldRef<"TelegramLinkToken", 'DateTime'>
+    readonly createdAt: FieldRef<"TelegramLinkToken", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TelegramLinkToken findUnique
+   */
+  export type TelegramLinkTokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which TelegramLinkToken to fetch.
+     */
+    where: TelegramLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * TelegramLinkToken findUniqueOrThrow
+   */
+  export type TelegramLinkTokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which TelegramLinkToken to fetch.
+     */
+    where: TelegramLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * TelegramLinkToken findFirst
+   */
+  export type TelegramLinkTokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which TelegramLinkToken to fetch.
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramLinkTokens to fetch.
+     */
+    orderBy?: TelegramLinkTokenOrderByWithRelationInput | TelegramLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TelegramLinkTokens.
+     */
+    cursor?: TelegramLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TelegramLinkTokens.
+     */
+    distinct?: TelegramLinkTokenScalarFieldEnum | TelegramLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramLinkToken findFirstOrThrow
+   */
+  export type TelegramLinkTokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which TelegramLinkToken to fetch.
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramLinkTokens to fetch.
+     */
+    orderBy?: TelegramLinkTokenOrderByWithRelationInput | TelegramLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TelegramLinkTokens.
+     */
+    cursor?: TelegramLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TelegramLinkTokens.
+     */
+    distinct?: TelegramLinkTokenScalarFieldEnum | TelegramLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramLinkToken findMany
+   */
+  export type TelegramLinkTokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which TelegramLinkTokens to fetch.
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramLinkTokens to fetch.
+     */
+    orderBy?: TelegramLinkTokenOrderByWithRelationInput | TelegramLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TelegramLinkTokens.
+     */
+    cursor?: TelegramLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramLinkTokens.
+     */
+    skip?: number
+    distinct?: TelegramLinkTokenScalarFieldEnum | TelegramLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramLinkToken create
+   */
+  export type TelegramLinkTokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TelegramLinkToken.
+     */
+    data: XOR<TelegramLinkTokenCreateInput, TelegramLinkTokenUncheckedCreateInput>
+  }
+
+  /**
+   * TelegramLinkToken createMany
+   */
+  export type TelegramLinkTokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TelegramLinkTokens.
+     */
+    data: TelegramLinkTokenCreateManyInput | TelegramLinkTokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TelegramLinkToken createManyAndReturn
+   */
+  export type TelegramLinkTokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many TelegramLinkTokens.
+     */
+    data: TelegramLinkTokenCreateManyInput | TelegramLinkTokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TelegramLinkToken update
+   */
+  export type TelegramLinkTokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TelegramLinkToken.
+     */
+    data: XOR<TelegramLinkTokenUpdateInput, TelegramLinkTokenUncheckedUpdateInput>
+    /**
+     * Choose, which TelegramLinkToken to update.
+     */
+    where: TelegramLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * TelegramLinkToken updateMany
+   */
+  export type TelegramLinkTokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TelegramLinkTokens.
+     */
+    data: XOR<TelegramLinkTokenUpdateManyMutationInput, TelegramLinkTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which TelegramLinkTokens to update
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * Limit how many TelegramLinkTokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TelegramLinkToken updateManyAndReturn
+   */
+  export type TelegramLinkTokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * The data used to update TelegramLinkTokens.
+     */
+    data: XOR<TelegramLinkTokenUpdateManyMutationInput, TelegramLinkTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which TelegramLinkTokens to update
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * Limit how many TelegramLinkTokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TelegramLinkToken upsert
+   */
+  export type TelegramLinkTokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TelegramLinkToken to update in case it exists.
+     */
+    where: TelegramLinkTokenWhereUniqueInput
+    /**
+     * In case the TelegramLinkToken found by the `where` argument doesn't exist, create a new TelegramLinkToken with this data.
+     */
+    create: XOR<TelegramLinkTokenCreateInput, TelegramLinkTokenUncheckedCreateInput>
+    /**
+     * In case the TelegramLinkToken was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TelegramLinkTokenUpdateInput, TelegramLinkTokenUncheckedUpdateInput>
+  }
+
+  /**
+   * TelegramLinkToken delete
+   */
+  export type TelegramLinkTokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter which TelegramLinkToken to delete.
+     */
+    where: TelegramLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * TelegramLinkToken deleteMany
+   */
+  export type TelegramLinkTokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TelegramLinkTokens to delete
+     */
+    where?: TelegramLinkTokenWhereInput
+    /**
+     * Limit how many TelegramLinkTokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TelegramLinkToken without action
+   */
+  export type TelegramLinkTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramLinkToken
+     */
+    select?: TelegramLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TelegramLinkToken
+     */
+    omit?: TelegramLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TelegramLinkTokenInclude<ExtArgs> | null
   }
 
 
@@ -7027,6 +8226,18 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const TelegramLinkTokenScalarFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId',
+    expiresAt: 'expiresAt',
+    usedAt: 'usedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type TelegramLinkTokenScalarFieldEnum = (typeof TelegramLinkTokenScalarFieldEnum)[keyof typeof TelegramLinkTokenScalarFieldEnum]
+
+
   export const AssignmentScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -7244,6 +8455,7 @@ export namespace Prisma {
     assignments?: AssignmentListRelationFilter
     submissions?: SubmissionListRelationFilter
     notificationLog?: NotificationLogListRelationFilter
+    telegramTokens?: TelegramLinkTokenListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7258,6 +8470,7 @@ export namespace Prisma {
     assignments?: AssignmentOrderByRelationAggregateInput
     submissions?: SubmissionOrderByRelationAggregateInput
     notificationLog?: NotificationLogOrderByRelationAggregateInput
+    telegramTokens?: TelegramLinkTokenOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7275,6 +8488,7 @@ export namespace Prisma {
     assignments?: AssignmentListRelationFilter
     submissions?: SubmissionListRelationFilter
     notificationLog?: NotificationLogListRelationFilter
+    telegramTokens?: TelegramLinkTokenListRelationFilter
   }, "id" | "email" | "telegramChatId">
 
   export type UserOrderByWithAggregationInput = {
@@ -7303,6 +8517,66 @@ export namespace Prisma {
     telegramChatId?: StringNullableWithAggregatesFilter<"User"> | string | null
     telegramLinked?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type TelegramLinkTokenWhereInput = {
+    AND?: TelegramLinkTokenWhereInput | TelegramLinkTokenWhereInput[]
+    OR?: TelegramLinkTokenWhereInput[]
+    NOT?: TelegramLinkTokenWhereInput | TelegramLinkTokenWhereInput[]
+    id?: StringFilter<"TelegramLinkToken"> | string
+    token?: StringFilter<"TelegramLinkToken"> | string
+    userId?: StringFilter<"TelegramLinkToken"> | string
+    expiresAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+    usedAt?: DateTimeNullableFilter<"TelegramLinkToken"> | Date | string | null
+    createdAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type TelegramLinkTokenOrderByWithRelationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type TelegramLinkTokenWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    token?: string
+    AND?: TelegramLinkTokenWhereInput | TelegramLinkTokenWhereInput[]
+    OR?: TelegramLinkTokenWhereInput[]
+    NOT?: TelegramLinkTokenWhereInput | TelegramLinkTokenWhereInput[]
+    userId?: StringFilter<"TelegramLinkToken"> | string
+    expiresAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+    usedAt?: DateTimeNullableFilter<"TelegramLinkToken"> | Date | string | null
+    createdAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "token">
+
+  export type TelegramLinkTokenOrderByWithAggregationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TelegramLinkTokenCountOrderByAggregateInput
+    _max?: TelegramLinkTokenMaxOrderByAggregateInput
+    _min?: TelegramLinkTokenMinOrderByAggregateInput
+  }
+
+  export type TelegramLinkTokenScalarWhereWithAggregatesInput = {
+    AND?: TelegramLinkTokenScalarWhereWithAggregatesInput | TelegramLinkTokenScalarWhereWithAggregatesInput[]
+    OR?: TelegramLinkTokenScalarWhereWithAggregatesInput[]
+    NOT?: TelegramLinkTokenScalarWhereWithAggregatesInput | TelegramLinkTokenScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TelegramLinkToken"> | string
+    token?: StringWithAggregatesFilter<"TelegramLinkToken"> | string
+    userId?: StringWithAggregatesFilter<"TelegramLinkToken"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"TelegramLinkToken"> | Date | string
+    usedAt?: DateTimeNullableWithAggregatesFilter<"TelegramLinkToken"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TelegramLinkToken"> | Date | string
   }
 
   export type AssignmentWhereInput = {
@@ -7588,6 +8862,7 @@ export namespace Prisma {
     assignments?: AssignmentCreateNestedManyWithoutCreatedByInput
     submissions?: SubmissionCreateNestedManyWithoutStudentInput
     notificationLog?: NotificationLogCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7602,6 +8877,7 @@ export namespace Prisma {
     assignments?: AssignmentUncheckedCreateNestedManyWithoutCreatedByInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutStudentInput
     notificationLog?: NotificationLogUncheckedCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -7616,6 +8892,7 @@ export namespace Prisma {
     assignments?: AssignmentUpdateManyWithoutCreatedByNestedInput
     submissions?: SubmissionUpdateManyWithoutStudentNestedInput
     notificationLog?: NotificationLogUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7630,6 +8907,7 @@ export namespace Prisma {
     assignments?: AssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutStudentNestedInput
     notificationLog?: NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7662,6 +8940,68 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     telegramChatId?: NullableStringFieldUpdateOperationsInput | string | null
     telegramLinked?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramLinkTokenCreateInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutTelegramTokensInput
+  }
+
+  export type TelegramLinkTokenUncheckedCreateInput = {
+    id?: string
+    token: string
+    userId: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type TelegramLinkTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutTelegramTokensNestedInput
+  }
+
+  export type TelegramLinkTokenUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramLinkTokenCreateManyInput = {
+    id?: string
+    token: string
+    userId: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type TelegramLinkTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramLinkTokenUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8015,6 +9355,12 @@ export namespace Prisma {
     none?: NotificationLogWhereInput
   }
 
+  export type TelegramLinkTokenListRelationFilter = {
+    every?: TelegramLinkTokenWhereInput
+    some?: TelegramLinkTokenWhereInput
+    none?: TelegramLinkTokenWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -8029,6 +9375,10 @@ export namespace Prisma {
   }
 
   export type NotificationLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TelegramLinkTokenOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8133,9 +9483,61 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type TelegramLinkTokenCountOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TelegramLinkTokenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TelegramLinkTokenMinOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    usedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type ReminderListRelationFilter = {
@@ -8234,17 +9636,6 @@ export namespace Prisma {
     not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type SubmissionAssignmentIdStudentIdCompoundUniqueInput = {
     assignmentId: string
     studentId: string
@@ -8288,20 +9679,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubmissionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumNotificationChannelFilter<$PrismaModel = never> = {
@@ -8394,6 +9771,13 @@ export namespace Prisma {
     connect?: NotificationLogWhereUniqueInput | NotificationLogWhereUniqueInput[]
   }
 
+  export type TelegramLinkTokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput> | TelegramLinkTokenCreateWithoutUserInput[] | TelegramLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TelegramLinkTokenCreateOrConnectWithoutUserInput | TelegramLinkTokenCreateOrConnectWithoutUserInput[]
+    createMany?: TelegramLinkTokenCreateManyUserInputEnvelope
+    connect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+  }
+
   export type AssignmentUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<AssignmentCreateWithoutCreatedByInput, AssignmentUncheckedCreateWithoutCreatedByInput> | AssignmentCreateWithoutCreatedByInput[] | AssignmentUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: AssignmentCreateOrConnectWithoutCreatedByInput | AssignmentCreateOrConnectWithoutCreatedByInput[]
@@ -8413,6 +9797,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationLogCreateOrConnectWithoutUserInput | NotificationLogCreateOrConnectWithoutUserInput[]
     createMany?: NotificationLogCreateManyUserInputEnvelope
     connect?: NotificationLogWhereUniqueInput | NotificationLogWhereUniqueInput[]
+  }
+
+  export type TelegramLinkTokenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput> | TelegramLinkTokenCreateWithoutUserInput[] | TelegramLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TelegramLinkTokenCreateOrConnectWithoutUserInput | TelegramLinkTokenCreateOrConnectWithoutUserInput[]
+    createMany?: TelegramLinkTokenCreateManyUserInputEnvelope
+    connect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8477,6 +9868,20 @@ export namespace Prisma {
     deleteMany?: NotificationLogScalarWhereInput | NotificationLogScalarWhereInput[]
   }
 
+  export type TelegramLinkTokenUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput> | TelegramLinkTokenCreateWithoutUserInput[] | TelegramLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TelegramLinkTokenCreateOrConnectWithoutUserInput | TelegramLinkTokenCreateOrConnectWithoutUserInput[]
+    upsert?: TelegramLinkTokenUpsertWithWhereUniqueWithoutUserInput | TelegramLinkTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TelegramLinkTokenCreateManyUserInputEnvelope
+    set?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    disconnect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    delete?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    connect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    update?: TelegramLinkTokenUpdateWithWhereUniqueWithoutUserInput | TelegramLinkTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TelegramLinkTokenUpdateManyWithWhereWithoutUserInput | TelegramLinkTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TelegramLinkTokenScalarWhereInput | TelegramLinkTokenScalarWhereInput[]
+  }
+
   export type AssignmentUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<AssignmentCreateWithoutCreatedByInput, AssignmentUncheckedCreateWithoutCreatedByInput> | AssignmentCreateWithoutCreatedByInput[] | AssignmentUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: AssignmentCreateOrConnectWithoutCreatedByInput | AssignmentCreateOrConnectWithoutCreatedByInput[]
@@ -8517,6 +9922,38 @@ export namespace Prisma {
     update?: NotificationLogUpdateWithWhereUniqueWithoutUserInput | NotificationLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationLogUpdateManyWithWhereWithoutUserInput | NotificationLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationLogScalarWhereInput | NotificationLogScalarWhereInput[]
+  }
+
+  export type TelegramLinkTokenUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput> | TelegramLinkTokenCreateWithoutUserInput[] | TelegramLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TelegramLinkTokenCreateOrConnectWithoutUserInput | TelegramLinkTokenCreateOrConnectWithoutUserInput[]
+    upsert?: TelegramLinkTokenUpsertWithWhereUniqueWithoutUserInput | TelegramLinkTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TelegramLinkTokenCreateManyUserInputEnvelope
+    set?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    disconnect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    delete?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    connect?: TelegramLinkTokenWhereUniqueInput | TelegramLinkTokenWhereUniqueInput[]
+    update?: TelegramLinkTokenUpdateWithWhereUniqueWithoutUserInput | TelegramLinkTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TelegramLinkTokenUpdateManyWithWhereWithoutUserInput | TelegramLinkTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TelegramLinkTokenScalarWhereInput | TelegramLinkTokenScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutTelegramTokensInput = {
+    create?: XOR<UserCreateWithoutTelegramTokensInput, UserUncheckedCreateWithoutTelegramTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTelegramTokensInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type UserUpdateOneRequiredWithoutTelegramTokensNestedInput = {
+    create?: XOR<UserCreateWithoutTelegramTokensInput, UserUncheckedCreateWithoutTelegramTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTelegramTokensInput
+    upsert?: UserUpsertWithoutTelegramTokensInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTelegramTokensInput, UserUpdateWithoutTelegramTokensInput>, UserUncheckedUpdateWithoutTelegramTokensInput>
   }
 
   export type UserCreateNestedOneWithoutAssignmentsInput = {
@@ -8691,10 +10128,6 @@ export namespace Prisma {
 
   export type EnumSubmissionStatusFieldUpdateOperationsInput = {
     set?: $Enums.SubmissionStatus
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type AssignmentUpdateOneRequiredWithoutSubmissionsNestedInput = {
@@ -8890,6 +10323,31 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumReminderTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ReminderType | EnumReminderTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ReminderType[] | ListEnumReminderTypeFieldRefInput<$PrismaModel>
@@ -8914,17 +10372,6 @@ export namespace Prisma {
     not?: NestedEnumSubmissionStatusFilter<$PrismaModel> | $Enums.SubmissionStatus
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedEnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.SubmissionStatus | EnumSubmissionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SubmissionStatus[] | ListEnumSubmissionStatusFieldRefInput<$PrismaModel>
@@ -8933,20 +10380,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSubmissionStatusFilter<$PrismaModel>
     _max?: NestedEnumSubmissionStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {
@@ -9073,6 +10506,32 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TelegramLinkTokenCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type TelegramLinkTokenUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type TelegramLinkTokenCreateOrConnectWithoutUserInput = {
+    where: TelegramLinkTokenWhereUniqueInput
+    create: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type TelegramLinkTokenCreateManyUserInputEnvelope = {
+    data: TelegramLinkTokenCreateManyUserInput | TelegramLinkTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AssignmentUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: AssignmentWhereUniqueInput
     update: XOR<AssignmentUpdateWithoutCreatedByInput, AssignmentUncheckedUpdateWithoutCreatedByInput>
@@ -9160,6 +10619,106 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"NotificationLog"> | string | null
   }
 
+  export type TelegramLinkTokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: TelegramLinkTokenWhereUniqueInput
+    update: XOR<TelegramLinkTokenUpdateWithoutUserInput, TelegramLinkTokenUncheckedUpdateWithoutUserInput>
+    create: XOR<TelegramLinkTokenCreateWithoutUserInput, TelegramLinkTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type TelegramLinkTokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: TelegramLinkTokenWhereUniqueInput
+    data: XOR<TelegramLinkTokenUpdateWithoutUserInput, TelegramLinkTokenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TelegramLinkTokenUpdateManyWithWhereWithoutUserInput = {
+    where: TelegramLinkTokenScalarWhereInput
+    data: XOR<TelegramLinkTokenUpdateManyMutationInput, TelegramLinkTokenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type TelegramLinkTokenScalarWhereInput = {
+    AND?: TelegramLinkTokenScalarWhereInput | TelegramLinkTokenScalarWhereInput[]
+    OR?: TelegramLinkTokenScalarWhereInput[]
+    NOT?: TelegramLinkTokenScalarWhereInput | TelegramLinkTokenScalarWhereInput[]
+    id?: StringFilter<"TelegramLinkToken"> | string
+    token?: StringFilter<"TelegramLinkToken"> | string
+    userId?: StringFilter<"TelegramLinkToken"> | string
+    expiresAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+    usedAt?: DateTimeNullableFilter<"TelegramLinkToken"> | Date | string | null
+    createdAt?: DateTimeFilter<"TelegramLinkToken"> | Date | string
+  }
+
+  export type UserCreateWithoutTelegramTokensInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    telegramChatId?: string | null
+    telegramLinked?: boolean
+    createdAt?: Date | string
+    assignments?: AssignmentCreateNestedManyWithoutCreatedByInput
+    submissions?: SubmissionCreateNestedManyWithoutStudentInput
+    notificationLog?: NotificationLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTelegramTokensInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    telegramChatId?: string | null
+    telegramLinked?: boolean
+    createdAt?: Date | string
+    assignments?: AssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    submissions?: SubmissionUncheckedCreateNestedManyWithoutStudentInput
+    notificationLog?: NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTelegramTokensInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTelegramTokensInput, UserUncheckedCreateWithoutTelegramTokensInput>
+  }
+
+  export type UserUpsertWithoutTelegramTokensInput = {
+    update: XOR<UserUpdateWithoutTelegramTokensInput, UserUncheckedUpdateWithoutTelegramTokensInput>
+    create: XOR<UserCreateWithoutTelegramTokensInput, UserUncheckedCreateWithoutTelegramTokensInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTelegramTokensInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTelegramTokensInput, UserUncheckedUpdateWithoutTelegramTokensInput>
+  }
+
+  export type UserUpdateWithoutTelegramTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    telegramChatId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramLinked?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignments?: AssignmentUpdateManyWithoutCreatedByNestedInput
+    submissions?: SubmissionUpdateManyWithoutStudentNestedInput
+    notificationLog?: NotificationLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTelegramTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    telegramChatId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramLinked?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignments?: AssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    submissions?: SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    notificationLog?: NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutAssignmentsInput = {
     id?: string
     email: string
@@ -9171,6 +10730,7 @@ export namespace Prisma {
     createdAt?: Date | string
     submissions?: SubmissionCreateNestedManyWithoutStudentInput
     notificationLog?: NotificationLogCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAssignmentsInput = {
@@ -9184,6 +10744,7 @@ export namespace Prisma {
     createdAt?: Date | string
     submissions?: SubmissionUncheckedCreateNestedManyWithoutStudentInput
     notificationLog?: NotificationLogUncheckedCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAssignmentsInput = {
@@ -9295,6 +10856,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submissions?: SubmissionUpdateManyWithoutStudentNestedInput
     notificationLog?: NotificationLogUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignmentsInput = {
@@ -9308,6 +10870,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submissions?: SubmissionUncheckedUpdateManyWithoutStudentNestedInput
     notificationLog?: NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ReminderUpsertWithWhereUniqueWithoutAssignmentInput = {
@@ -9474,6 +11037,7 @@ export namespace Prisma {
     createdAt?: Date | string
     assignments?: AssignmentCreateNestedManyWithoutCreatedByInput
     notificationLog?: NotificationLogCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -9487,6 +11051,7 @@ export namespace Prisma {
     createdAt?: Date | string
     assignments?: AssignmentUncheckedCreateNestedManyWithoutCreatedByInput
     notificationLog?: NotificationLogUncheckedCreateNestedManyWithoutUserInput
+    telegramTokens?: TelegramLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -9551,6 +11116,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignments?: AssignmentUpdateManyWithoutCreatedByNestedInput
     notificationLog?: NotificationLogUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -9564,6 +11130,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignments?: AssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
     notificationLog?: NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+    telegramTokens?: TelegramLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNotificationLogInput = {
@@ -9577,6 +11144,7 @@ export namespace Prisma {
     createdAt?: Date | string
     assignments?: AssignmentCreateNestedManyWithoutCreatedByInput
     submissions?: SubmissionCreateNestedManyWithoutStudentInput
+    telegramTokens?: TelegramLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationLogInput = {
@@ -9590,6 +11158,7 @@ export namespace Prisma {
     createdAt?: Date | string
     assignments?: AssignmentUncheckedCreateNestedManyWithoutCreatedByInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutStudentInput
+    telegramTokens?: TelegramLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationLogInput = {
@@ -9648,6 +11217,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignments?: AssignmentUpdateManyWithoutCreatedByNestedInput
     submissions?: SubmissionUpdateManyWithoutStudentNestedInput
+    telegramTokens?: TelegramLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationLogInput = {
@@ -9661,6 +11231,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignments?: AssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+    telegramTokens?: TelegramLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AssignmentUpsertWithoutLogsInput = {
@@ -9723,6 +11294,14 @@ export namespace Prisma {
     status: $Enums.NotificationStatus
     sentAt?: Date | string
     errorMessage?: string | null
+  }
+
+  export type TelegramLinkTokenCreateManyUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    usedAt?: Date | string | null
+    createdAt?: Date | string
   }
 
   export type AssignmentUpdateWithoutCreatedByInput = {
@@ -9810,6 +11389,30 @@ export namespace Prisma {
     status?: EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type TelegramLinkTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramLinkTokenUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramLinkTokenUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderCreateManyAssignmentInput = {

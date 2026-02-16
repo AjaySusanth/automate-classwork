@@ -12,6 +12,40 @@ This folder contains exported n8n workflows so the automation logic is versioned
 
 ![n8n workflow canvas](workflow.png)
 
+## Telegram /start Linking Workflow
+
+- File: `telegram-start-linking.json`
+- Trigger: Listens for `/start <token>` messages from Telegram users
+- Logic:
+  1. Extracts token and chat ID from message
+  2. Validates token format
+  3. Calls backend `POST /api/telegram/link` with token and chatId
+  4. Routes based on success/error:
+     - **Success**: sends ✅ confirmation message
+     - **Missing token**: sends ❌ error message
+     - **Errors** (expired, already linked, invalid): sends user-friendly error messages based on backend error classification
+
+### Screenshot
+
+![Telegram linking workflow canvas](telegram-linking.png)
+
+### Error Handling
+
+The workflow includes smart error branching with user-friendly messages:
+- "already linked" → ⚠️ This Telegram account is already linked to another user.
+- "expired" → ⌛ Token expired. Please generate a fresh link in the app.
+- "Invalid or used" → ❌ This token is invalid or already used.
+
+### Required Backend Endpoints
+
+- `POST /api/telegram/link` - Links Telegram chatId to user account
+
+### Configuration
+
+- Replace credentials with your Telegram bot token
+- Update webhook ID if needed
+- URL uses `host.docker.internal:3001` for local development
+
 ## Notes
 
 - Workflow JSON is sanitized (credentials and instance metadata removed).

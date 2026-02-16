@@ -131,6 +131,15 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TelegramLinkTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.AssignmentScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -213,6 +222,7 @@ exports.NotificationStatus = exports.$Enums.NotificationStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  TelegramLinkToken: 'TelegramLinkToken',
   Assignment: 'Assignment',
   Reminder: 'Reminder',
   Submission: 'Submission',

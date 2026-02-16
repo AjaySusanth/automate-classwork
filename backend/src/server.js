@@ -8,6 +8,7 @@ import submissionRoutes from "./routes/submissionRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import reminderRoutes from "./routes/reminderRoutes.js";
+import telegramRoutes from "./routes/telegramRoutes.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/reminders", reminderRoutes);
+app.use("/api/telegram", telegramRoutes);
 
 app.get("/health", async (req, res) => {
   try {

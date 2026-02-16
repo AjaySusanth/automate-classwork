@@ -175,11 +175,12 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 **Frontend**
 
-- [ ] Link Telegram page
+- [x] Link Telegram page (tested)
 
 **Integration check**
 
-- [ ] /start -> link -> chatId saved
+- [x] /start -> link -> chatId saved
+- [x] End-to-end flow working (student generates token → sends to bot → n8n links chatId → confirmation in Telegram)
 
 ---
 

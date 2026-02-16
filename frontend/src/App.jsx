@@ -14,6 +14,7 @@ import AssignmentForm from "./pages/teacher/AssignmentForm";
 import SubmissionDashboard from "./pages/teacher/SubmissionDashboard";
 import MyAssignments from "./pages/student/MyAssignments";
 import SubmitWork from "./pages/student/SubmitWork";
+import LinkTelegram from "./pages/student/LinkTelegram";
 
 const HomeRedirect = () => {
   const { user, loading } = useAuth();
@@ -127,6 +128,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="STUDENT">
                 <SubmitWork />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/link-telegram"
+            element={
+              <ProtectedRoute requiredRole="STUDENT">
+                <LinkTelegram />
               </ProtectedRoute>
             }
           />

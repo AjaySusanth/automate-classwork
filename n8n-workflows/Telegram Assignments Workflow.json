@@ -60,7 +60,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Read input\nconst input = $input.first().json;\nconst assignments = input.assignments;\n\n// Config\nconst chatId = 123456789;\nconst baseUrl = 'http://localhost:3000';\n\n// Build formatted message text\nlet message = `📋 Your Pending Assignments (${assignments.length}):\\n\\n`;\n\nassignments.forEach((a, index) => {\n  const dueDate = new Date(a.dueDate).toLocaleDateString('en-US');\n  message += `${index + 1}️⃣ ${a.title}\\n`;\n  message += `Due: ${dueDate}\\n\\n`;\n});\n\n// Build inline keyboard (one button per row)\nconst inlineKeyboard = assignments.map(a => ([\n  {\n    text: `🚀 Submit: ${a.title}`,\n    url: `${baseUrl}/student/assignments/${a.id}/submit`\n  }\n]));\n\n// Return Telegram-ready payload\nreturn [\n  {\n    json: {\n      chat_id: chatId,\n      text: message,\n      parse_mode: 'Markdown',\n      reply_markup: {\n        inline_keyboard: inlineKeyboard\n      }\n    }\n  }\n];\n"
+        "jsCode": "// Read input\nconst input = $input.first().json;\nconst assignments = input.assignments;\n\n// Config\nconst chatId = $node[\"Telegram Trigger\"].json.message.chat.id;\nconst baseUrl = 'http://localhost:3000';\n\n// Build formatted message text\nlet message = `📋 Your Pending Assignments (${assignments.length}):\\n\\n`;\n\nassignments.forEach((a, index) => {\n  const dueDate = new Date(a.dueDate).toLocaleDateString('en-US');\n  message += `${index + 1}️⃣ ${a.title}\\n`;\n  message += `Due: ${dueDate}\\n\\n`;\n});\n\n// Build inline keyboard (one button per row)\nconst inlineKeyboard = assignments.map(a => ([\n  {\n    text: `🚀 Submit: ${a.title}`,\n    url: `${baseUrl}/student/assignments/${a.id}/submit`\n  }\n]));\n\n// Return Telegram-ready payload\nreturn [\n  {\n    json: {\n      chat_id: chatId,\n      text: message,\n      parse_mode: 'Markdown',\n      reply_markup: {\n        inline_keyboard: inlineKeyboard\n      }\n    }\n  }\n];\n"
       },
       "id": "900e9f65-3dce-4391-af1a-57b9677b4779",
       "name": "Format Message",
@@ -186,7 +186,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "553f089a-6568-4572-ac89-c10b6f4b468b",
+  "versionId": "d4e1133b-a59c-4990-b859-ee2fc068c768",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "your-instance-id"

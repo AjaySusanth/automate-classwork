@@ -18,7 +18,7 @@ const sendSubmissionConfirmation = (studentId, assignmentTitle, assignmentId, st
         select: { id: true, telegramChatId: true, telegramLinked: true },
       });
 
-      if (!user?.telegramLinked) return;
+      if (!user?.telegramLinked || !user?.telegramChatId?.trim()) return;
 
       const statusEmoji = status === "LATE" ? "⚠️ Late" : "✅ On Time";
       const message =

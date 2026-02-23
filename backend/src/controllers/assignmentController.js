@@ -267,10 +267,10 @@ export const getPendingAssignmentsByChatId = async (req, res) => {
     // Find user by telegram chat ID
     const user = await prisma.user.findUnique({
       where: { telegramChatId: chatId },
-      select: { id: true, name: true },
+      select: { id: true, name: true, telegramLinked: true },
     });
 
-    if (!user) {
+    if (!user || !user.telegramLinked) {
       return res.status(404).json({ error: "User not linked to this Telegram account" });
     }
 

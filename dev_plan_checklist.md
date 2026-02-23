@@ -186,13 +186,47 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 
 ## Feature 7: Frontend Integration + Polish
 
-- [ ] API layer (Axios instance + services)
-- [ ] Protected routes by role
+- [x] API layer (Axios instance + services)
+- [x] Protected routes by role
 - [ ] Error handling and 404 page
 
 **Integration check**
 
-- [ ] Full flow works for teacher and student
+- [x] Full flow works for teacher and student
+
+---
+
+## Feature 8: Telegram /assignments Command (View & Submit)
+
+**Backend first**
+
+- [x] Endpoint: `GET /api/assignments/pending` for telegram-linked students
+  - Returns: pending assignments with submission status
+  - Filters by: not yet submitted
+- [x] No new endpoints needed for submission (reuse existing POST endpoint)
+
+**Stop point**
+
+- [x] Endpoint returns correct pending assignments for student
+
+**n8n**
+
+- [x] Telegram `/assignments` command handler
+- [x] Query backend for pending assignments
+- [x] Format response as numbered list with inline buttons
+- [x] Each assignment has "View" button → deep link to web submit page
+- [x] Workflow: Listen for message = `/assignments` → trigger handler
+
+**Frontend**
+
+- [ ] No new pages needed (reuse existing SubmitWork page)
+- [ ] Ensure submit form works seamlessly for Telegram redirects
+
+**Integration check**
+
+- [x] `/assignments` command shows list with links
+- [x] Click link → web app opens with pre-filled assignment ID
+- [x] Student can submit and get Telegram confirmation
 
 ---
 

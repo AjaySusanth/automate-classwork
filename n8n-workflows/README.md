@@ -46,6 +46,31 @@ The workflow includes smart error branching with user-friendly messages:
 - Update webhook ID if needed
 - URL uses `host.docker.internal:3001` for local development
 
+## Telegram Assignments Workflow
+
+- File: `Telegram Assignments Workflow.json`
+- Trigger: Listens for `/assignments` command from Telegram users
+- Logic:
+  1. Validates that the message text is `/assignments`
+  2. Fetches pending assignments from the backend using the Telegram chat ID
+  3. Formats a message with the list of assignments and creates inline keyboard buttons for each, pointing to the submission URL
+  4. Sends the formatted message back to the user via Telegram API
+
+### Screenshot
+
+![Telegram assignments workflow canvas](telegram-assignment.png)
+
+### Required Backend Endpoints
+
+- `GET /api/assignments/pending-by-chat/:chatId` - Retrieves a list of pending assignments for a specific Telegram chat
+
+### Configuration
+
+- Replace credentials with your Telegram bot token
+- Update the base URL in the "Format Message" node to your application's public URL (e.g., `https://your-app.com`)
+- Backend URL defaults to `http://host.docker.internal:3001` for local Docker setups
+
+
 ## Notes
 
 - Workflow JSON is sanitized (credentials and instance metadata removed).

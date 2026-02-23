@@ -1,0 +1,196 @@
+{
+  "name": "Telegram Assignments Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "f6c4ba4b-8ded-4557-890d-cc47c56a433b",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        112
+      ],
+      "webhookId": "your-webhook-id",
+      "credentials": {
+        "telegramApi": {
+          "id": "your-credential-id",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.text }}",
+              "value2": "/assignments"
+            }
+          ]
+        }
+      },
+      "id": "c5a1f56a-d5d8-493b-a064-9f875aad2696",
+      "name": "Validate Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:3001/api/assignments/pending-by-chat/{{ $json.message.chat.id }}",
+        "options": {}
+      },
+      "id": "d0b7b566-f1b5-4365-98d3-412ccf769b16",
+      "name": "Fetch Pending Assignments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -496,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read input\nconst input = $input.first().json;\nconst assignments = input.assignments;\n\n// Config\nconst chatId = $node[\"Telegram Trigger\"].json.message.chat.id;\nconst baseUrl = 'http://localhost:3000';\n\n// Build formatted message text\nlet message = `📋 Your Pending Assignments (${assignments.length}):\\n\\n`;\n\nassignments.forEach((a, index) => {\n  const dueDate = new Date(a.dueDate).toLocaleDateString('en-US');\n  message += `${index + 1}️⃣ ${a.title}\\n`;\n  message += `Due: ${dueDate}\\n\\n`;\n});\n\n// Build inline keyboard (one button per row)\nconst inlineKeyboard = assignments.map(a => ([\n  {\n    text: `🚀 Submit: ${a.title}`,\n    url: `${baseUrl}/student/assignments/${a.id}/submit`\n  }\n]));\n\n// Return Telegram-ready payload\nreturn [\n  {\n    json: {\n      chat_id: chatId,\n      text: message,\n      parse_mode: 'Markdown',\n      reply_markup: {\n        inline_keyboard: inlineKeyboard\n      }\n    }\n  }\n];\n"
+      },
+      "id": "900e9f65-3dce-4391-af1a-57b9677b4779",
+      "name": "Format Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "❌ Invalid command. Please use /assignments to view your pending assignments.",
+        "additionalFields": {}
+      },
+      "id": "8c7deaec-9b18-442f-a36d-107b34cea283",
+      "name": "Send Error Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -496,
+        208
+      ],
+      "webhookId": "your-webhook-id",
+      "credentials": {
+        "telegramApi": {
+          "id": "your-credential-id",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot<your-bot-token>/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=chat_id",
+              "value": "={{ $json.chat_id }}"
+            },
+            {
+              "name": "=text",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "reply_markup",
+              "value": "={{ $json.reply_markup }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "b43584f9-48d7-4f1a-9d1d-a9cd4fc06e32",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Command": {
+      "main": [
+        [
+          {
+            "node": "Fetch Pending Assignments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Pending Assignments": {
+      "main": [
+        [
+          {
+            "node": "Format Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Message": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d4e1133b-a59c-4990-b859-ee2fc068c768",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "your-instance-id"
+  },
+  "id": "MEN83nhLt7gDSbQq",
+  "tags": []
+}

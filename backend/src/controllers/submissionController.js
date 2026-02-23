@@ -1,8 +1,36 @@
 import prisma from "../config/db.config.js";
+import notificationService from "../services/notifications/notificationSetup.js";
 
 
 const getSubmissionStatus = (submittedAt, dueDate) => {
   return submittedAt > dueDate ? "LATE" : "SUBMITTED";
+};
+
+/**
+ * Fire-and-forget Telegram confirmation after a successful submission.
+ * Never throws — errors are silently logged.
+ */
+const sendSubmissionConfirmation = (studentId, assignmentTitle, assignmentId, status) => {
+  (async () => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: studentId },
+        select: { id: true, telegramChatId: true, telegramLinked: true },
+      });
+
+      if (!user?.telegramLinked || !user?.telegramChatId?.trim()) return;
+
+      const statusEmoji = status === "LATE" ? "⚠️ Late" : "✅ On Time";
+      const message =
+        `✅ Assignment Submitted!\n` +
+        `📝 ${assignmentTitle}\n` +
+        `⏰ Status: ${statusEmoji}`;
+
+      await notificationService.send(user, message, "telegram", assignmentId);
+    } catch (err) {
+      console.error("Submission confirmation failed:", err?.message || err);
+    }
+  })();
 };
 
 export const listSubmissions = async (req, res) => {
@@ -71,7 +99,7 @@ export const submitAssignment = async (req, res) => {
 
     const assignment = await prisma.assignment.findUnique({
       where: { id: assignmentId },
-      select: { id: true, dueDate: true },
+      select: { id: true, title: true, dueDate: true },
     });
 
     if (!assignment) {
@@ -92,6 +120,7 @@ export const submitAssignment = async (req, res) => {
         },
       });
 
+      sendSubmissionConfirmation(req.user.id, assignment.title, assignmentId, status);
       return res.status(201).json({ submission });
     } catch (error) {
       if (error?.code === "P2002") {
@@ -109,6 +138,7 @@ export const submitAssignment = async (req, res) => {
           },
         });
 
+        sendSubmissionConfirmation(req.user.id, assignment.title, assignmentId, status);
         return res.status(200).json({ submission });
       }
 

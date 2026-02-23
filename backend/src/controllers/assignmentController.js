@@ -222,3 +222,79 @@ export const deleteAssignment = async (req, res) => {
     res.status(500).json({ error: "Failed to delete assignment" });
   }
 };
+
+/**
+ * Get pending assignments for a student (not yet submitted).
+ * Used for Telegram /assignments command and student dashboard.
+ */
+export const getPendingAssignments = async (req, res) => {
+  try {
+    const { id: studentId } = req.user;
+
+    const assignments = await prisma.assignment.findMany({
+      where: {
+        submissions: {
+          some: {
+            studentId: studentId,
+            status: "PENDING",
+          },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+      },
+      orderBy: { dueDate: "asc" },
+    });
+
+    res.json({ assignments });
+  } catch (error) {
+    console.error("Get pending assignments error:", error);
+    res.status(500).json({ error: "Failed to fetch pending assignments" });
+  }
+};
+
+/**
+ * Get pending assignments for a student by their Telegram chatId.
+ * Used for n8n workflows (no JWT required).
+ */
+export const getPendingAssignmentsByChatId = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+
+    // Find user by telegram chat ID
+    const user = await prisma.user.findUnique({
+      where: { telegramChatId: chatId },
+      select: { id: true, name: true, telegramLinked: true },
+    });
+
+    if (!user || !user.telegramLinked) {
+      return res.status(404).json({ error: "User not linked to this Telegram account" });
+    }
+
+    const assignments = await prisma.assignment.findMany({
+      where: {
+        submissions: {
+          some: {
+            studentId: user.id,
+            status: "PENDING",
+          },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+      },
+      orderBy: { dueDate: "asc" },
+    });
+
+    res.json({ assignments, userName: user.name });
+  } catch (error) {
+    console.error("Get pending assignments by chat ID error:", error);
+    res.status(500).json({ error: "Failed to fetch pending assignments" });
+  }
+};

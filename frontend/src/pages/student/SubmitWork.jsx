@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchAssignmentById } from "../../services/assignmentService";
-import { submitAssignment } from "../../services/submissionService";
+import { submitAssignment, fetchMySubmission } from "../../services/submissionService";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export default function SubmitWork() {
   const { assignmentId } = useParams();
   const navigate = useNavigate();
 
   const [assignment, setAssignment] = useState(null);
-  const [content, setContent] = useState("");
+  const [existing, setExisting] = useState(null);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -16,12 +19,17 @@ export default function SubmitWork() {
   useEffect(() => {
     setLoading(true);
     setError("");
-    setAssignment(null);
 
-    const loadAssignment = async () => {
+    const load = async () => {
       try {
-        const data = await fetchAssignmentById(assignmentId);
-        setAssignment(data.assignment);
+        const [assignmentData, submissionData] = await Promise.all([
+          fetchAssignmentById(assignmentId),
+          fetchMySubmission(assignmentId),
+        ]);
+        setAssignment(assignmentData.assignment);
+        if (submissionData.submission?.fileUrl) {
+          setExisting(submissionData.submission);
+        }
       } catch (err) {
         setError(err.response?.data?.error || "Failed to load assignment");
       } finally {
@@ -29,16 +37,35 @@ export default function SubmitWork() {
       }
     };
 
-    loadAssignment();
+    load();
   }, [assignmentId]);
+
+  const handleFileChange = (event) => {
+    const selected = event.target.files[0];
+    if (!selected) {
+      setFile(null);
+      return;
+    }
+    if (selected.size > MAX_FILE_SIZE) {
+      setError("File size must be under 10 MB");
+      setFile(null);
+      return;
+    }
+    setError("");
+    setFile(selected);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!file) {
+      setError("Please select a file to submit");
+      return;
+    }
     setSaving(true);
     setError("");
 
     try {
-      await submitAssignment(assignmentId, { content });
+      await submitAssignment(assignmentId, file);
       navigate("/student/assignments");
     } catch (err) {
       setError(err.response?.data?.error || "Failed to submit assignment");
@@ -47,13 +74,21 @@ export default function SubmitWork() {
     }
   };
 
+  const isResubmission = !!existing;
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Submit Assignment</h1>
-            <p className="text-gray-600">Submit your work below.</p>
+            <h1 className="text-2xl font-bold">
+              {isResubmission ? "Update Submission" : "Submit Assignment"}
+            </h1>
+            <p className="text-gray-600">
+              {isResubmission
+                ? "You can upload a new file to replace your previous submission."
+                : "Upload your work below."}
+            </p>
           </div>
           <Link
             to="/student/assignments"
@@ -72,7 +107,7 @@ export default function SubmitWork() {
         {loading ? (
           <div className="rounded-md bg-white p-6 shadow-sm">Loading...</div>
         ) : assignment ? (
-          <div className="rounded-md bg-white p-6 shadow-sm space-y-4">
+          <div className="rounded-md bg-white p-6 shadow-sm space-y-5">
             <div>
               <h2 className="text-lg font-semibold">{assignment.title}</h2>
               <p className="text-gray-600">{assignment.description}</p>
@@ -81,19 +116,56 @@ export default function SubmitWork() {
               </p>
             </div>
 
+            {/* Previous submission info */}
+            {existing && (
+              <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 space-y-2">
+                <p className="text-sm font-semibold text-blue-800">
+                  📎 Previous Submission
+                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <a
+                      href={existing.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline font-medium"
+                    >
+                      {existing.fileName}
+                    </a>
+                    <p className="text-xs text-blue-500">
+                      Submitted: {new Date(existing.submittedAt).toLocaleString()}
+                      {" · "}
+                      {existing.status === "LATE" ? "⚠️ Late" : "✅ On Time"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Submission (text or link)
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {isResubmission ? "Upload new file (replaces previous)" : "Upload file"}{" "}
+                  <span className="text-gray-400 font-normal">(max 10 MB)</span>
                 </label>
-                <textarea
-                  rows={5}
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                  required
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Paste your answer or link here"
-                />
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+                    Choose file
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-sm text-gray-500">
+                    {file ? file.name : "No file selected"}
+                  </span>
+                </div>
+                {file && (
+                  <p className="mt-1 text-xs text-gray-400">
+                    {(file.size / 1024).toFixed(1)} KB
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-3">
@@ -105,10 +177,14 @@ export default function SubmitWork() {
                 </Link>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || !file}
                   className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? "Submitting..." : "Submit"}
+                  {saving
+                    ? "Uploading..."
+                    : isResubmission
+                      ? "Update Submission"
+                      : "Submit"}
                 </button>
               </div>
             </form>

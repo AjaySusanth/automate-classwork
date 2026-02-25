@@ -6009,7 +6009,8 @@ export namespace Prisma {
     id: string | null
     assignmentId: string | null
     studentId: string | null
-    content: string | null
+    fileUrl: string | null
+    fileName: string | null
     status: $Enums.SubmissionStatus | null
     submittedAt: Date | null
     createdAt: Date | null
@@ -6019,7 +6020,8 @@ export namespace Prisma {
     id: string | null
     assignmentId: string | null
     studentId: string | null
-    content: string | null
+    fileUrl: string | null
+    fileName: string | null
     status: $Enums.SubmissionStatus | null
     submittedAt: Date | null
     createdAt: Date | null
@@ -6029,7 +6031,8 @@ export namespace Prisma {
     id: number
     assignmentId: number
     studentId: number
-    content: number
+    fileUrl: number
+    fileName: number
     status: number
     submittedAt: number
     createdAt: number
@@ -6041,7 +6044,8 @@ export namespace Prisma {
     id?: true
     assignmentId?: true
     studentId?: true
-    content?: true
+    fileUrl?: true
+    fileName?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6051,7 +6055,8 @@ export namespace Prisma {
     id?: true
     assignmentId?: true
     studentId?: true
-    content?: true
+    fileUrl?: true
+    fileName?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6061,7 +6066,8 @@ export namespace Prisma {
     id?: true
     assignmentId?: true
     studentId?: true
-    content?: true
+    fileUrl?: true
+    fileName?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6144,7 +6150,8 @@ export namespace Prisma {
     id: string
     assignmentId: string
     studentId: string
-    content: string | null
+    fileUrl: string | null
+    fileName: string | null
     status: $Enums.SubmissionStatus
     submittedAt: Date | null
     createdAt: Date
@@ -6171,7 +6178,8 @@ export namespace Prisma {
     id?: boolean
     assignmentId?: boolean
     studentId?: boolean
-    content?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6183,7 +6191,8 @@ export namespace Prisma {
     id?: boolean
     assignmentId?: boolean
     studentId?: boolean
-    content?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6195,7 +6204,8 @@ export namespace Prisma {
     id?: boolean
     assignmentId?: boolean
     studentId?: boolean
-    content?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6207,13 +6217,14 @@ export namespace Prisma {
     id?: boolean
     assignmentId?: boolean
     studentId?: boolean
-    content?: boolean
+    fileUrl?: boolean
+    fileName?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
   }
 
-  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assignmentId" | "studentId" | "content" | "status" | "submittedAt" | "createdAt", ExtArgs["result"]["submission"]>
+  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assignmentId" | "studentId" | "fileUrl" | "fileName" | "status" | "submittedAt" | "createdAt", ExtArgs["result"]["submission"]>
   export type SubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
     student?: boolean | UserDefaultArgs<ExtArgs>
@@ -6237,7 +6248,8 @@ export namespace Prisma {
       id: string
       assignmentId: string
       studentId: string
-      content: string | null
+      fileUrl: string | null
+      fileName: string | null
       status: $Enums.SubmissionStatus
       submittedAt: Date | null
       createdAt: Date
@@ -6669,7 +6681,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Submission", 'String'>
     readonly assignmentId: FieldRef<"Submission", 'String'>
     readonly studentId: FieldRef<"Submission", 'String'>
-    readonly content: FieldRef<"Submission", 'String'>
+    readonly fileUrl: FieldRef<"Submission", 'String'>
+    readonly fileName: FieldRef<"Submission", 'String'>
     readonly status: FieldRef<"Submission", 'SubmissionStatus'>
     readonly submittedAt: FieldRef<"Submission", 'DateTime'>
     readonly createdAt: FieldRef<"Submission", 'DateTime'>
@@ -8267,7 +8280,8 @@ export namespace Prisma {
     id: 'id',
     assignmentId: 'assignmentId',
     studentId: 'studentId',
-    content: 'content',
+    fileUrl: 'fileUrl',
+    fileName: 'fileName',
     status: 'status',
     submittedAt: 'submittedAt',
     createdAt: 'createdAt'
@@ -8720,7 +8734,8 @@ export namespace Prisma {
     id?: StringFilter<"Submission"> | string
     assignmentId?: StringFilter<"Submission"> | string
     studentId?: StringFilter<"Submission"> | string
-    content?: StringNullableFilter<"Submission"> | string | null
+    fileUrl?: StringNullableFilter<"Submission"> | string | null
+    fileName?: StringNullableFilter<"Submission"> | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -8732,7 +8747,8 @@ export namespace Prisma {
     id?: SortOrder
     assignmentId?: SortOrder
     studentId?: SortOrder
-    content?: SortOrderInput | SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileName?: SortOrderInput | SortOrder
     status?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -8748,7 +8764,8 @@ export namespace Prisma {
     NOT?: SubmissionWhereInput | SubmissionWhereInput[]
     assignmentId?: StringFilter<"Submission"> | string
     studentId?: StringFilter<"Submission"> | string
-    content?: StringNullableFilter<"Submission"> | string | null
+    fileUrl?: StringNullableFilter<"Submission"> | string | null
+    fileName?: StringNullableFilter<"Submission"> | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -8760,7 +8777,8 @@ export namespace Prisma {
     id?: SortOrder
     assignmentId?: SortOrder
     studentId?: SortOrder
-    content?: SortOrderInput | SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileName?: SortOrderInput | SortOrder
     status?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -8776,7 +8794,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Submission"> | string
     assignmentId?: StringWithAggregatesFilter<"Submission"> | string
     studentId?: StringWithAggregatesFilter<"Submission"> | string
-    content?: StringNullableWithAggregatesFilter<"Submission"> | string | null
+    fileUrl?: StringNullableWithAggregatesFilter<"Submission"> | string | null
+    fileName?: StringNullableWithAggregatesFilter<"Submission"> | string | null
     status?: EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
@@ -9150,7 +9169,8 @@ export namespace Prisma {
 
   export type SubmissionCreateInput = {
     id?: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9162,7 +9182,8 @@ export namespace Prisma {
     id?: string
     assignmentId: string
     studentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9170,7 +9191,8 @@ export namespace Prisma {
 
   export type SubmissionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9182,7 +9204,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     assignmentId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9192,7 +9215,8 @@ export namespace Prisma {
     id?: string
     assignmentId: string
     studentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9200,7 +9224,8 @@ export namespace Prisma {
 
   export type SubmissionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9210,7 +9235,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     assignmentId?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9645,7 +9671,8 @@ export namespace Prisma {
     id?: SortOrder
     assignmentId?: SortOrder
     studentId?: SortOrder
-    content?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
@@ -9655,7 +9682,8 @@ export namespace Prisma {
     id?: SortOrder
     assignmentId?: SortOrder
     studentId?: SortOrder
-    content?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
@@ -9665,7 +9693,8 @@ export namespace Prisma {
     id?: SortOrder
     assignmentId?: SortOrder
     studentId?: SortOrder
-    content?: SortOrder
+    fileUrl?: SortOrder
+    fileName?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
@@ -10452,7 +10481,8 @@ export namespace Prisma {
 
   export type SubmissionCreateWithoutStudentInput = {
     id?: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10462,7 +10492,8 @@ export namespace Prisma {
   export type SubmissionUncheckedCreateWithoutStudentInput = {
     id?: string
     assignmentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10584,7 +10615,8 @@ export namespace Prisma {
     id?: StringFilter<"Submission"> | string
     assignmentId?: StringFilter<"Submission"> | string
     studentId?: StringFilter<"Submission"> | string
-    content?: StringNullableFilter<"Submission"> | string | null
+    fileUrl?: StringNullableFilter<"Submission"> | string | null
+    fileName?: StringNullableFilter<"Submission"> | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -10780,7 +10812,8 @@ export namespace Prisma {
 
   export type SubmissionCreateWithoutAssignmentInput = {
     id?: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10790,7 +10823,8 @@ export namespace Prisma {
   export type SubmissionUncheckedCreateWithoutAssignmentInput = {
     id?: string
     studentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -11281,7 +11315,8 @@ export namespace Prisma {
   export type SubmissionCreateManyStudentInput = {
     id?: string
     assignmentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -11339,7 +11374,8 @@ export namespace Prisma {
 
   export type SubmissionUpdateWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11349,7 +11385,8 @@ export namespace Prisma {
   export type SubmissionUncheckedUpdateWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
     assignmentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11358,7 +11395,8 @@ export namespace Prisma {
   export type SubmissionUncheckedUpdateManyWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
     assignmentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11426,7 +11464,8 @@ export namespace Prisma {
   export type SubmissionCreateManyAssignmentInput = {
     id?: string
     studentId: string
-    content?: string | null
+    fileUrl?: string | null
+    fileName?: string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -11467,7 +11506,8 @@ export namespace Prisma {
 
   export type SubmissionUpdateWithoutAssignmentInput = {
     id?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11477,7 +11517,8 @@ export namespace Prisma {
   export type SubmissionUncheckedUpdateWithoutAssignmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11486,7 +11527,8 @@ export namespace Prisma {
   export type SubmissionUncheckedUpdateManyWithoutAssignmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     studentId?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

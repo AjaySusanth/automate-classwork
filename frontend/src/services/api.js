@@ -8,20 +8,21 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
  */
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 /**
- * Request interceptor - automatically adds JWT token to all requests.
- * This runs before every API call and attaches the token from localStorage.
+ * Request interceptor - automatically adds JWT token and Content-Type.
+ * Skips Content-Type for FormData so the browser sets the multipart boundary.
  */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Let the browser set Content-Type for FormData (multipart/form-data with boundary)
+    if (!(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
     }
     return config;
   },

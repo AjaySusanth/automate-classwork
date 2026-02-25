@@ -1,6 +1,6 @@
 import prisma from "../config/db.config.js";
 import notificationService from "../services/notifications/notificationSetup.js";
-
+import storageProvider from "../services/storage/storageSetup.js";
 
 const getSubmissionStatus = (submittedAt, dueDate) => {
   return submittedAt > dueDate ? "LATE" : "SUBMITTED";
@@ -31,6 +31,15 @@ const sendSubmissionConfirmation = (studentId, assignmentTitle, assignmentId, st
       console.error("Submission confirmation failed:", err?.message || err);
     }
   })();
+};
+
+/**
+ * Build storage path for a submission file.
+ */
+const buildStoragePath = (assignmentId, studentId, fileName) => {
+  const timestamp = Date.now();
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return `${assignmentId}/${studentId}/${timestamp}-${safeName}`;
 };
 
 export const listSubmissions = async (req, res) => {
@@ -88,13 +97,41 @@ export const listSubmissionsByAssignment = async (req, res) => {
   }
 };
 
+export const getMySubmission = async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+
+    const submission = await prisma.submission.findUnique({
+      where: {
+        assignmentId_studentId: {
+          assignmentId,
+          studentId: req.user.id,
+        },
+      },
+      select: {
+        id: true,
+        fileUrl: true,
+        fileName: true,
+        status: true,
+        submittedAt: true,
+      },
+    });
+
+    res.json({ submission });
+  } catch (error) {
+    console.error("Get my submission error:", error);
+    res.status(500).json({ error: "Failed to fetch submission" });
+  }
+};
+
+
 export const submitAssignment = async (req, res) => {
   try {
     const { assignmentId } = req.params;
-    const { content } = req.body;
+    const file = req.file;
 
-    if (!content || typeof content !== "string") {
-      return res.status(400).json({ error: "Submission content is required" });
+    if (!file) {
+      return res.status(400).json({ error: "A file is required for submission" });
     }
 
     const assignment = await prisma.assignment.findUnique({
@@ -106,6 +143,14 @@ export const submitAssignment = async (req, res) => {
       return res.status(404).json({ error: "Assignment not found" });
     }
 
+    // Upload file to storage
+    const storagePath = buildStoragePath(assignmentId, req.user.id, file.originalname);
+    const { url: fileUrl } = await storageProvider.upload(
+      file.buffer,
+      storagePath,
+      file.mimetype,
+    );
+
     const submittedAt = new Date();
     const status = getSubmissionStatus(submittedAt, assignment.dueDate);
 
@@ -114,7 +159,8 @@ export const submitAssignment = async (req, res) => {
         data: {
           assignmentId,
           studentId: req.user.id,
-          content,
+          fileUrl,
+          fileName: file.originalname,
           status,
           submittedAt,
         },
@@ -124,6 +170,30 @@ export const submitAssignment = async (req, res) => {
       return res.status(201).json({ submission });
     } catch (error) {
       if (error?.code === "P2002") {
+        // Resubmission — delete old file, then update record
+        const existing = await prisma.submission.findUnique({
+          where: {
+            assignmentId_studentId: {
+              assignmentId,
+              studentId: req.user.id,
+            },
+          },
+          select: { fileUrl: true },
+        });
+
+        if (existing?.fileUrl) {
+          // Extract path within bucket from Supabase public URL
+          // URL format: .../storage/v1/object/public/<bucket>/<path>
+          try {
+            const afterPublic = existing.fileUrl.split("/storage/v1/object/public/").pop();
+            // Strip the bucket name prefix to get the key within the bucket
+            const oldKey = afterPublic.substring(afterPublic.indexOf("/") + 1);
+            if (oldKey) await storageProvider.delete(oldKey);
+          } catch (deleteErr) {
+            console.error("Old file cleanup failed:", deleteErr?.message);
+          }
+        }
+
         const submission = await prisma.submission.update({
           where: {
             assignmentId_studentId: {
@@ -132,7 +202,8 @@ export const submitAssignment = async (req, res) => {
             },
           },
           data: {
-            content,
+            fileUrl,
+            fileName: file.originalname,
             status,
             submittedAt,
           },

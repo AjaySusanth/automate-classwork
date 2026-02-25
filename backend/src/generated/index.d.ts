@@ -3760,8 +3760,18 @@ export namespace Prisma {
 
   export type AggregateAssignment = {
     _count: AssignmentCountAggregateOutputType | null
+    _avg: AssignmentAvgAggregateOutputType | null
+    _sum: AssignmentSumAggregateOutputType | null
     _min: AssignmentMinAggregateOutputType | null
     _max: AssignmentMaxAggregateOutputType | null
+  }
+
+  export type AssignmentAvgAggregateOutputType = {
+    totalMark: number | null
+  }
+
+  export type AssignmentSumAggregateOutputType = {
+    totalMark: number | null
   }
 
   export type AssignmentMinAggregateOutputType = {
@@ -3772,6 +3782,7 @@ export namespace Prisma {
     createdById: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    totalMark: number | null
   }
 
   export type AssignmentMaxAggregateOutputType = {
@@ -3782,6 +3793,7 @@ export namespace Prisma {
     createdById: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    totalMark: number | null
   }
 
   export type AssignmentCountAggregateOutputType = {
@@ -3792,9 +3804,18 @@ export namespace Prisma {
     createdById: number
     createdAt: number
     updatedAt: number
+    totalMark: number
     _all: number
   }
 
+
+  export type AssignmentAvgAggregateInputType = {
+    totalMark?: true
+  }
+
+  export type AssignmentSumAggregateInputType = {
+    totalMark?: true
+  }
 
   export type AssignmentMinAggregateInputType = {
     id?: true
@@ -3804,6 +3825,7 @@ export namespace Prisma {
     createdById?: true
     createdAt?: true
     updatedAt?: true
+    totalMark?: true
   }
 
   export type AssignmentMaxAggregateInputType = {
@@ -3814,6 +3836,7 @@ export namespace Prisma {
     createdById?: true
     createdAt?: true
     updatedAt?: true
+    totalMark?: true
   }
 
   export type AssignmentCountAggregateInputType = {
@@ -3824,6 +3847,7 @@ export namespace Prisma {
     createdById?: true
     createdAt?: true
     updatedAt?: true
+    totalMark?: true
     _all?: true
   }
 
@@ -3865,6 +3889,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: AssignmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AssignmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AssignmentMinAggregateInputType
@@ -3895,6 +3931,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: AssignmentCountAggregateInputType | true
+    _avg?: AssignmentAvgAggregateInputType
+    _sum?: AssignmentSumAggregateInputType
     _min?: AssignmentMinAggregateInputType
     _max?: AssignmentMaxAggregateInputType
   }
@@ -3907,7 +3945,10 @@ export namespace Prisma {
     createdById: string
     createdAt: Date
     updatedAt: Date
+    totalMark: number | null
     _count: AssignmentCountAggregateOutputType | null
+    _avg: AssignmentAvgAggregateOutputType | null
+    _sum: AssignmentSumAggregateOutputType | null
     _min: AssignmentMinAggregateOutputType | null
     _max: AssignmentMaxAggregateOutputType | null
   }
@@ -3934,6 +3975,7 @@ export namespace Prisma {
     createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    totalMark?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     reminders?: boolean | Assignment$remindersArgs<ExtArgs>
     submissions?: boolean | Assignment$submissionsArgs<ExtArgs>
@@ -3949,6 +3991,7 @@ export namespace Prisma {
     createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    totalMark?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["assignment"]>
 
@@ -3960,6 +4003,7 @@ export namespace Prisma {
     createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    totalMark?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["assignment"]>
 
@@ -3971,9 +4015,10 @@ export namespace Prisma {
     createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    totalMark?: boolean
   }
 
-  export type AssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "dueDate" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["assignment"]>
+  export type AssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "dueDate" | "createdById" | "createdAt" | "updatedAt" | "totalMark", ExtArgs["result"]["assignment"]>
   export type AssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     reminders?: boolean | Assignment$remindersArgs<ExtArgs>
@@ -4004,6 +4049,7 @@ export namespace Prisma {
       createdById: string
       createdAt: Date
       updatedAt: Date
+      totalMark: number | null
     }, ExtArgs["result"]["assignment"]>
     composites: {}
   }
@@ -4438,6 +4484,7 @@ export namespace Prisma {
     readonly createdById: FieldRef<"Assignment", 'String'>
     readonly createdAt: FieldRef<"Assignment", 'DateTime'>
     readonly updatedAt: FieldRef<"Assignment", 'DateTime'>
+    readonly totalMark: FieldRef<"Assignment", 'Int'>
   }
     
 
@@ -6001,8 +6048,18 @@ export namespace Prisma {
 
   export type AggregateSubmission = {
     _count: SubmissionCountAggregateOutputType | null
+    _avg: SubmissionAvgAggregateOutputType | null
+    _sum: SubmissionSumAggregateOutputType | null
     _min: SubmissionMinAggregateOutputType | null
     _max: SubmissionMaxAggregateOutputType | null
+  }
+
+  export type SubmissionAvgAggregateOutputType = {
+    grade: number | null
+  }
+
+  export type SubmissionSumAggregateOutputType = {
+    grade: number | null
   }
 
   export type SubmissionMinAggregateOutputType = {
@@ -6011,6 +6068,8 @@ export namespace Prisma {
     studentId: string | null
     fileUrl: string | null
     fileName: string | null
+    grade: number | null
+    gradedAt: Date | null
     status: $Enums.SubmissionStatus | null
     submittedAt: Date | null
     createdAt: Date | null
@@ -6022,6 +6081,8 @@ export namespace Prisma {
     studentId: string | null
     fileUrl: string | null
     fileName: string | null
+    grade: number | null
+    gradedAt: Date | null
     status: $Enums.SubmissionStatus | null
     submittedAt: Date | null
     createdAt: Date | null
@@ -6033,6 +6094,8 @@ export namespace Prisma {
     studentId: number
     fileUrl: number
     fileName: number
+    grade: number
+    gradedAt: number
     status: number
     submittedAt: number
     createdAt: number
@@ -6040,12 +6103,22 @@ export namespace Prisma {
   }
 
 
+  export type SubmissionAvgAggregateInputType = {
+    grade?: true
+  }
+
+  export type SubmissionSumAggregateInputType = {
+    grade?: true
+  }
+
   export type SubmissionMinAggregateInputType = {
     id?: true
     assignmentId?: true
     studentId?: true
     fileUrl?: true
     fileName?: true
+    grade?: true
+    gradedAt?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6057,6 +6130,8 @@ export namespace Prisma {
     studentId?: true
     fileUrl?: true
     fileName?: true
+    grade?: true
+    gradedAt?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6068,6 +6143,8 @@ export namespace Prisma {
     studentId?: true
     fileUrl?: true
     fileName?: true
+    grade?: true
+    gradedAt?: true
     status?: true
     submittedAt?: true
     createdAt?: true
@@ -6112,6 +6189,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: SubmissionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SubmissionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: SubmissionMinAggregateInputType
@@ -6142,6 +6231,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: SubmissionCountAggregateInputType | true
+    _avg?: SubmissionAvgAggregateInputType
+    _sum?: SubmissionSumAggregateInputType
     _min?: SubmissionMinAggregateInputType
     _max?: SubmissionMaxAggregateInputType
   }
@@ -6152,10 +6243,14 @@ export namespace Prisma {
     studentId: string
     fileUrl: string | null
     fileName: string | null
+    grade: number | null
+    gradedAt: Date | null
     status: $Enums.SubmissionStatus
     submittedAt: Date | null
     createdAt: Date
     _count: SubmissionCountAggregateOutputType | null
+    _avg: SubmissionAvgAggregateOutputType | null
+    _sum: SubmissionSumAggregateOutputType | null
     _min: SubmissionMinAggregateOutputType | null
     _max: SubmissionMaxAggregateOutputType | null
   }
@@ -6180,6 +6275,8 @@ export namespace Prisma {
     studentId?: boolean
     fileUrl?: boolean
     fileName?: boolean
+    grade?: boolean
+    gradedAt?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6193,6 +6290,8 @@ export namespace Prisma {
     studentId?: boolean
     fileUrl?: boolean
     fileName?: boolean
+    grade?: boolean
+    gradedAt?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6206,6 +6305,8 @@ export namespace Prisma {
     studentId?: boolean
     fileUrl?: boolean
     fileName?: boolean
+    grade?: boolean
+    gradedAt?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
@@ -6219,12 +6320,14 @@ export namespace Prisma {
     studentId?: boolean
     fileUrl?: boolean
     fileName?: boolean
+    grade?: boolean
+    gradedAt?: boolean
     status?: boolean
     submittedAt?: boolean
     createdAt?: boolean
   }
 
-  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assignmentId" | "studentId" | "fileUrl" | "fileName" | "status" | "submittedAt" | "createdAt", ExtArgs["result"]["submission"]>
+  export type SubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assignmentId" | "studentId" | "fileUrl" | "fileName" | "grade" | "gradedAt" | "status" | "submittedAt" | "createdAt", ExtArgs["result"]["submission"]>
   export type SubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assignment?: boolean | AssignmentDefaultArgs<ExtArgs>
     student?: boolean | UserDefaultArgs<ExtArgs>
@@ -6250,6 +6353,8 @@ export namespace Prisma {
       studentId: string
       fileUrl: string | null
       fileName: string | null
+      grade: number | null
+      gradedAt: Date | null
       status: $Enums.SubmissionStatus
       submittedAt: Date | null
       createdAt: Date
@@ -6683,6 +6788,8 @@ export namespace Prisma {
     readonly studentId: FieldRef<"Submission", 'String'>
     readonly fileUrl: FieldRef<"Submission", 'String'>
     readonly fileName: FieldRef<"Submission", 'String'>
+    readonly grade: FieldRef<"Submission", 'Int'>
+    readonly gradedAt: FieldRef<"Submission", 'DateTime'>
     readonly status: FieldRef<"Submission", 'SubmissionStatus'>
     readonly submittedAt: FieldRef<"Submission", 'DateTime'>
     readonly createdAt: FieldRef<"Submission", 'DateTime'>
@@ -8258,7 +8365,8 @@ export namespace Prisma {
     dueDate: 'dueDate',
     createdById: 'createdById',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    totalMark: 'totalMark'
   };
 
   export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
@@ -8282,6 +8390,8 @@ export namespace Prisma {
     studentId: 'studentId',
     fileUrl: 'fileUrl',
     fileName: 'fileName',
+    grade: 'grade',
+    gradedAt: 'gradedAt',
     status: 'status',
     submittedAt: 'submittedAt',
     createdAt: 'createdAt'
@@ -8382,6 +8492,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ReminderType'
    */
   export type EnumReminderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReminderType'>
@@ -8438,16 +8562,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Float'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'Float[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -8604,6 +8728,7 @@ export namespace Prisma {
     createdById?: StringFilter<"Assignment"> | string
     createdAt?: DateTimeFilter<"Assignment"> | Date | string
     updatedAt?: DateTimeFilter<"Assignment"> | Date | string
+    totalMark?: IntNullableFilter<"Assignment"> | number | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     reminders?: ReminderListRelationFilter
     submissions?: SubmissionListRelationFilter
@@ -8618,6 +8743,7 @@ export namespace Prisma {
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    totalMark?: SortOrderInput | SortOrder
     createdBy?: UserOrderByWithRelationInput
     reminders?: ReminderOrderByRelationAggregateInput
     submissions?: SubmissionOrderByRelationAggregateInput
@@ -8635,6 +8761,7 @@ export namespace Prisma {
     createdById?: StringFilter<"Assignment"> | string
     createdAt?: DateTimeFilter<"Assignment"> | Date | string
     updatedAt?: DateTimeFilter<"Assignment"> | Date | string
+    totalMark?: IntNullableFilter<"Assignment"> | number | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     reminders?: ReminderListRelationFilter
     submissions?: SubmissionListRelationFilter
@@ -8649,9 +8776,12 @@ export namespace Prisma {
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    totalMark?: SortOrderInput | SortOrder
     _count?: AssignmentCountOrderByAggregateInput
+    _avg?: AssignmentAvgOrderByAggregateInput
     _max?: AssignmentMaxOrderByAggregateInput
     _min?: AssignmentMinOrderByAggregateInput
+    _sum?: AssignmentSumOrderByAggregateInput
   }
 
   export type AssignmentScalarWhereWithAggregatesInput = {
@@ -8665,6 +8795,7 @@ export namespace Prisma {
     createdById?: StringWithAggregatesFilter<"Assignment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Assignment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Assignment"> | Date | string
+    totalMark?: IntNullableWithAggregatesFilter<"Assignment"> | number | null
   }
 
   export type ReminderWhereInput = {
@@ -8736,6 +8867,8 @@ export namespace Prisma {
     studentId?: StringFilter<"Submission"> | string
     fileUrl?: StringNullableFilter<"Submission"> | string | null
     fileName?: StringNullableFilter<"Submission"> | string | null
+    grade?: IntNullableFilter<"Submission"> | number | null
+    gradedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -8749,6 +8882,8 @@ export namespace Prisma {
     studentId?: SortOrder
     fileUrl?: SortOrderInput | SortOrder
     fileName?: SortOrderInput | SortOrder
+    grade?: SortOrderInput | SortOrder
+    gradedAt?: SortOrderInput | SortOrder
     status?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -8766,6 +8901,8 @@ export namespace Prisma {
     studentId?: StringFilter<"Submission"> | string
     fileUrl?: StringNullableFilter<"Submission"> | string | null
     fileName?: StringNullableFilter<"Submission"> | string | null
+    grade?: IntNullableFilter<"Submission"> | number | null
+    gradedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -8779,12 +8916,16 @@ export namespace Prisma {
     studentId?: SortOrder
     fileUrl?: SortOrderInput | SortOrder
     fileName?: SortOrderInput | SortOrder
+    grade?: SortOrderInput | SortOrder
+    gradedAt?: SortOrderInput | SortOrder
     status?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: SubmissionCountOrderByAggregateInput
+    _avg?: SubmissionAvgOrderByAggregateInput
     _max?: SubmissionMaxOrderByAggregateInput
     _min?: SubmissionMinOrderByAggregateInput
+    _sum?: SubmissionSumOrderByAggregateInput
   }
 
   export type SubmissionScalarWhereWithAggregatesInput = {
@@ -8796,6 +8937,8 @@ export namespace Prisma {
     studentId?: StringWithAggregatesFilter<"Submission"> | string
     fileUrl?: StringNullableWithAggregatesFilter<"Submission"> | string | null
     fileName?: StringNullableWithAggregatesFilter<"Submission"> | string | null
+    grade?: IntNullableWithAggregatesFilter<"Submission"> | number | null
+    gradedAt?: DateTimeNullableWithAggregatesFilter<"Submission"> | Date | string | null
     status?: EnumSubmissionStatusWithAggregatesFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Submission"> | Date | string
@@ -9031,6 +9174,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     createdBy: UserCreateNestedOneWithoutAssignmentsInput
     reminders?: ReminderCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionCreateNestedManyWithoutAssignmentInput
@@ -9045,6 +9189,7 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     reminders?: ReminderUncheckedCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogUncheckedCreateNestedManyWithoutAssignmentInput
@@ -9057,6 +9202,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     createdBy?: UserUpdateOneRequiredWithoutAssignmentsNestedInput
     reminders?: ReminderUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUpdateManyWithoutAssignmentNestedInput
@@ -9071,6 +9217,7 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     reminders?: ReminderUncheckedUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUncheckedUpdateManyWithoutAssignmentNestedInput
@@ -9084,6 +9231,7 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
   }
 
   export type AssignmentUpdateManyMutationInput = {
@@ -9093,6 +9241,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AssignmentUncheckedUpdateManyInput = {
@@ -9103,6 +9252,7 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReminderCreateInput = {
@@ -9171,6 +9321,8 @@ export namespace Prisma {
     id?: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9184,6 +9336,8 @@ export namespace Prisma {
     studentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9193,6 +9347,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9206,6 +9362,8 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9217,6 +9375,8 @@ export namespace Prisma {
     studentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -9226,6 +9386,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9237,6 +9399,8 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9566,6 +9730,17 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ReminderListRelationFilter = {
     every?: ReminderWhereInput
     some?: ReminderWhereInput
@@ -9584,6 +9759,11 @@ export namespace Prisma {
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    totalMark?: SortOrder
+  }
+
+  export type AssignmentAvgOrderByAggregateInput = {
+    totalMark?: SortOrder
   }
 
   export type AssignmentMaxOrderByAggregateInput = {
@@ -9594,6 +9774,7 @@ export namespace Prisma {
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    totalMark?: SortOrder
   }
 
   export type AssignmentMinOrderByAggregateInput = {
@@ -9604,6 +9785,27 @@ export namespace Prisma {
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    totalMark?: SortOrder
+  }
+
+  export type AssignmentSumOrderByAggregateInput = {
+    totalMark?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type EnumReminderTypeFilter<$PrismaModel = never> = {
@@ -9673,9 +9875,15 @@ export namespace Prisma {
     studentId?: SortOrder
     fileUrl?: SortOrder
     fileName?: SortOrder
+    grade?: SortOrder
+    gradedAt?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type SubmissionAvgOrderByAggregateInput = {
+    grade?: SortOrder
   }
 
   export type SubmissionMaxOrderByAggregateInput = {
@@ -9684,6 +9892,8 @@ export namespace Prisma {
     studentId?: SortOrder
     fileUrl?: SortOrder
     fileName?: SortOrder
+    grade?: SortOrder
+    gradedAt?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
@@ -9695,9 +9905,15 @@ export namespace Prisma {
     studentId?: SortOrder
     fileUrl?: SortOrder
     fileName?: SortOrder
+    grade?: SortOrder
+    gradedAt?: SortOrder
     status?: SortOrder
     submittedAt?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type SubmissionSumOrderByAggregateInput = {
+    grade?: SortOrder
   }
 
   export type EnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -10031,6 +10247,14 @@ export namespace Prisma {
     connectOrCreate?: NotificationLogCreateOrConnectWithoutAssignmentInput | NotificationLogCreateOrConnectWithoutAssignmentInput[]
     createMany?: NotificationLogCreateManyAssignmentInputEnvelope
     connect?: NotificationLogWhereUniqueInput | NotificationLogWhereUniqueInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutAssignmentsNestedInput = {
@@ -10377,6 +10601,33 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumReminderTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ReminderType | EnumReminderTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ReminderType[] | ListEnumReminderTypeFieldRefInput<$PrismaModel>
@@ -10452,6 +10703,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     reminders?: ReminderCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogCreateNestedManyWithoutAssignmentInput
@@ -10464,6 +10716,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     reminders?: ReminderUncheckedCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogUncheckedCreateNestedManyWithoutAssignmentInput
@@ -10483,6 +10736,8 @@ export namespace Prisma {
     id?: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10494,6 +10749,8 @@ export namespace Prisma {
     assignmentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10590,6 +10847,7 @@ export namespace Prisma {
     createdById?: StringFilter<"Assignment"> | string
     createdAt?: DateTimeFilter<"Assignment"> | Date | string
     updatedAt?: DateTimeFilter<"Assignment"> | Date | string
+    totalMark?: IntNullableFilter<"Assignment"> | number | null
   }
 
   export type SubmissionUpsertWithWhereUniqueWithoutStudentInput = {
@@ -10617,6 +10875,8 @@ export namespace Prisma {
     studentId?: StringFilter<"Submission"> | string
     fileUrl?: StringNullableFilter<"Submission"> | string | null
     fileName?: StringNullableFilter<"Submission"> | string | null
+    grade?: IntNullableFilter<"Submission"> | number | null
+    gradedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     status?: EnumSubmissionStatusFilter<"Submission"> | $Enums.SubmissionStatus
     submittedAt?: DateTimeNullableFilter<"Submission"> | Date | string | null
     createdAt?: DateTimeFilter<"Submission"> | Date | string
@@ -10814,6 +11074,8 @@ export namespace Prisma {
     id?: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10825,6 +11087,8 @@ export namespace Prisma {
     studentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -10974,6 +11238,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     createdBy: UserCreateNestedOneWithoutAssignmentsInput
     submissions?: SubmissionCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogCreateNestedManyWithoutAssignmentInput
@@ -10987,6 +11252,7 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     submissions?: SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogUncheckedCreateNestedManyWithoutAssignmentInput
   }
@@ -11014,6 +11280,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     createdBy?: UserUpdateOneRequiredWithoutAssignmentsNestedInput
     submissions?: SubmissionUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUpdateManyWithoutAssignmentNestedInput
@@ -11027,6 +11294,7 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     submissions?: SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUncheckedUpdateManyWithoutAssignmentNestedInput
   }
@@ -11038,6 +11306,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     createdBy: UserCreateNestedOneWithoutAssignmentsInput
     reminders?: ReminderCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogCreateNestedManyWithoutAssignmentInput
@@ -11051,6 +11320,7 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     reminders?: ReminderUncheckedCreateNestedManyWithoutAssignmentInput
     logs?: NotificationLogUncheckedCreateNestedManyWithoutAssignmentInput
   }
@@ -11111,6 +11381,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     createdBy?: UserUpdateOneRequiredWithoutAssignmentsNestedInput
     reminders?: ReminderUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUpdateManyWithoutAssignmentNestedInput
@@ -11124,6 +11395,7 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     reminders?: ReminderUncheckedUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUncheckedUpdateManyWithoutAssignmentNestedInput
   }
@@ -11207,6 +11479,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     createdBy: UserCreateNestedOneWithoutAssignmentsInput
     reminders?: ReminderCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionCreateNestedManyWithoutAssignmentInput
@@ -11220,6 +11493,7 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
     reminders?: ReminderUncheckedCreateNestedManyWithoutAssignmentInput
     submissions?: SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   }
@@ -11286,6 +11560,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     createdBy?: UserUpdateOneRequiredWithoutAssignmentsNestedInput
     reminders?: ReminderUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUpdateManyWithoutAssignmentNestedInput
@@ -11299,6 +11574,7 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     reminders?: ReminderUncheckedUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   }
@@ -11310,6 +11586,7 @@ export namespace Prisma {
     dueDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    totalMark?: number | null
   }
 
   export type SubmissionCreateManyStudentInput = {
@@ -11317,6 +11594,8 @@ export namespace Prisma {
     assignmentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -11346,6 +11625,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     reminders?: ReminderUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUpdateManyWithoutAssignmentNestedInput
@@ -11358,6 +11638,7 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
     reminders?: ReminderUncheckedUpdateManyWithoutAssignmentNestedInput
     submissions?: SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
     logs?: NotificationLogUncheckedUpdateManyWithoutAssignmentNestedInput
@@ -11370,12 +11651,15 @@ export namespace Prisma {
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalMark?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type SubmissionUpdateWithoutStudentInput = {
     id?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11387,6 +11671,8 @@ export namespace Prisma {
     assignmentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11397,6 +11683,8 @@ export namespace Prisma {
     assignmentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11466,6 +11754,8 @@ export namespace Prisma {
     studentId: string
     fileUrl?: string | null
     fileName?: string | null
+    grade?: number | null
+    gradedAt?: Date | string | null
     status?: $Enums.SubmissionStatus
     submittedAt?: Date | string | null
     createdAt?: Date | string
@@ -11508,6 +11798,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11519,6 +11811,8 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11529,6 +11823,8 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    grade?: NullableIntFieldUpdateOperationsInput | number | null
+    gradedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

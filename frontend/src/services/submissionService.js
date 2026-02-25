@@ -5,8 +5,15 @@ export const fetchMySubmissions = async () => {
   return response.data;
 };
 
-export const submitAssignment = async (assignmentId, payload) => {
-  const response = await api.post(`/submissions/${assignmentId}`, payload);
+export const fetchMySubmission = async (assignmentId) => {
+  const response = await api.get(`/submissions/my/${assignmentId}`);
+  return response.data;
+};
+
+export const submitAssignment = async (assignmentId, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await api.post(`/submissions/${assignmentId}`, formData);
   return response.data;
 };
 

@@ -163,7 +163,8 @@ exports.Prisma.SubmissionScalarFieldEnum = {
   id: 'id',
   assignmentId: 'assignmentId',
   studentId: 'studentId',
-  content: 'content',
+  fileUrl: 'fileUrl',
+  fileName: 'fileName',
   status: 'status',
   submittedAt: 'submittedAt',
   createdAt: 'createdAt'

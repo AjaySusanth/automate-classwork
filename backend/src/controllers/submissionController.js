@@ -1,6 +1,7 @@
 import prisma from "../config/db.config.js";
 import notificationService from "../services/notifications/notificationSetup.js";
 import storageProvider from "../services/storage/storageSetup.js";
+import archiver from "archiver";
 
 const getSubmissionStatus = (submittedAt, dueDate) => {
   return submittedAt > dueDate ? "LATE" : "SUBMITTED";
@@ -94,6 +95,77 @@ export const listSubmissionsByAssignment = async (req, res) => {
   } catch (error) {
     console.error("List submissions by assignment error:", error);
     res.status(500).json({ error: "Failed to fetch submissions" });
+  }
+};
+
+export const downloadAllSubmissions = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const assignment = await prisma.assignment.findUnique({
+      where: { id },
+      select: { id: true, createdById: true, title: true },
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ error: "Assignment not found" });
+    }
+
+    if (assignment.createdById !== req.user.id) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const submissions = await prisma.submission.findMany({
+      where: { assignmentId: id, fileUrl: { not: null } },
+      include: {
+        student: { select: { name: true } },
+      },
+    });
+
+    if (submissions.length === 0) {
+      return res.status(404).json({ error: "No submitted files to download" });
+    }
+
+    const safeName = assignment.title.replace(/[^a-zA-Z0-9_-]/g, "_");
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename="${safeName}_submissions.zip"`);
+
+    const archive = archiver("zip", { zlib: { level: 5 } });
+    archive.pipe(res);
+
+    archive.on("error", (err) => {
+      console.error("Archive error:", err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Failed to create archive" });
+      }
+    });
+
+    for (const submission of submissions) {
+      const studentName = (submission.student?.name || "unknown").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const fileName = submission.fileName || "file";
+      const entryName = `${studentName}_${fileName}`;
+
+      try {
+        const response = await fetch(submission.fileUrl);
+        if (!response.ok) {
+          console.error(`Failed to fetch file for ${studentName}: ${response.status}`);
+          continue;
+        }
+        // Convert web ReadableStream to Node stream
+        const { Readable } = await import("stream");
+        const nodeStream = Readable.fromWeb(response.body);
+        archive.append(nodeStream, { name: entryName });
+      } catch (fetchErr) {
+        console.error(`Failed to fetch file for ${studentName}:`, fetchErr.message);
+      }
+    }
+
+    await archive.finalize();
+  } catch (error) {
+    console.error("Download all submissions error:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to download submissions" });
+    }
   }
 };
 
@@ -237,5 +309,52 @@ export const listMySubmissions = async (req, res) => {
   } catch (error) {
     console.error("List my submissions error:", error);
     res.status(500).json({ error: "Failed to fetch submissions" });
+  }
+};
+
+export const gradeSubmission = async (req, res) => {
+  try {
+    const { submissionId } = req.params;
+    const { grade } = req.body;
+
+    if (grade == null || typeof grade !== "number" || grade < 0) {
+      return res.status(400).json({ error: "A valid grade is required" });
+    }
+
+    const submission = await prisma.submission.findUnique({
+      where: { id: submissionId },
+      include: {
+        assignment: {
+          select: { id: true, createdById: true, totalMark: true },
+        },
+      },
+    });
+
+    if (!submission) {
+      return res.status(404).json({ error: "Submission not found" });
+    }
+
+    if (submission.assignment.createdById !== req.user.id) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    if (submission.assignment.totalMark != null && grade > submission.assignment.totalMark) {
+      return res
+        .status(400)
+        .json({ error: `Grade cannot exceed total marks (${submission.assignment.totalMark})` });
+    }
+
+    const updated = await prisma.submission.update({
+      where: { id: submissionId },
+      data: {
+        grade,
+        gradedAt: new Date(),
+      },
+    });
+
+    res.json({ submission: updated });
+  } catch (error) {
+    console.error("Grade submission error:", error);
+    res.status(500).json({ error: "Failed to grade submission" });
   }
 };

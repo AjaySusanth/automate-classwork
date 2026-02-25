@@ -147,7 +147,8 @@ exports.Prisma.AssignmentScalarFieldEnum = {
   dueDate: 'dueDate',
   createdById: 'createdById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  totalMark: 'totalMark'
 };
 
 exports.Prisma.ReminderScalarFieldEnum = {
@@ -165,6 +166,8 @@ exports.Prisma.SubmissionScalarFieldEnum = {
   studentId: 'studentId',
   fileUrl: 'fileUrl',
   fileName: 'fileName',
+  grade: 'grade',
+  gradedAt: 'gradedAt',
   status: 'status',
   submittedAt: 'submittedAt',
   createdAt: 'createdAt'

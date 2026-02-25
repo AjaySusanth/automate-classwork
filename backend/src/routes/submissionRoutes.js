@@ -3,9 +3,11 @@ import multer from "multer";
 import {
   listSubmissions,
   listSubmissionsByAssignment,
+  downloadAllSubmissions,
   submitAssignment,
   listMySubmissions,
   getMySubmission,
+  gradeSubmission,
 } from "../controllers/submissionController.js";
 import { authenticate, requireRole } from "../middleware/auth.js";
 
@@ -23,8 +25,15 @@ router.get(
   requireRole("TEACHER"),
   listSubmissionsByAssignment,
 );
+router.get(
+  "/assignment/:id/download",
+  authenticate,
+  requireRole("TEACHER"),
+  downloadAllSubmissions,
+);
 router.get("/my", authenticate, requireRole("STUDENT"), listMySubmissions);
 router.get("/my/:assignmentId", authenticate, requireRole("STUDENT"), getMySubmission);
+router.patch("/:submissionId/grade", authenticate, requireRole("TEACHER"), gradeSubmission);
 router.post(
   "/:assignmentId",
   authenticate,

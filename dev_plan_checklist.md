@@ -245,3 +245,9 @@ Backend-first, feature-by-feature plan with stop points and integration checks.
 - [ ] Assignment flow checklist
 - [ ] Notification flow checklist
 - [ ] Submission tracking checklist
+
+---
+
+## Future Scope
+
+- [ ] **Nudge / Reminder** — "Send Reminder" button in SubmissionDashboard to send a one-off Telegram message to specific students who haven't submitted yet

@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AssignmentList from "./pages/teacher/AssignmentList";
 import AssignmentForm from "./pages/teacher/AssignmentForm";
 import SubmissionDashboard from "./pages/teacher/SubmissionDashboard";
+import Analytics from "./pages/teacher/Analytics";
 import MyAssignments from "./pages/student/MyAssignments";
 import SubmitWork from "./pages/student/SubmitWork";
 import LinkTelegram from "./pages/student/LinkTelegram";
@@ -110,6 +111,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="TEACHER">
                 <SubmissionDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/analytics"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <Analytics />
               </ProtectedRoute>
             }
           />

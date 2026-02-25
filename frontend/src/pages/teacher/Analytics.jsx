@@ -26,6 +26,7 @@ export default function Analytics() {
   const [submissionsMap, setSubmissionsMap] = useState({});
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -47,8 +48,10 @@ export default function Analytics() {
         );
         setSubmissionsMap(Object.fromEntries(entries));
         if (list.length > 0) setSelectedId(list[0].id);
+        setError("");
       } catch (err) {
         console.error("Analytics load failed:", err);
+        setError(err.response?.data?.error || "Failed to load analytics data");
       } finally {
         setLoading(false);
       }
@@ -113,6 +116,24 @@ export default function Analytics() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-6xl mx-auto space-y-4">
+          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+            {error}
+          </div>
+          <Link
+            to="/teacher/submissions"
+            className="text-sm font-semibold text-blue-600 hover:underline"
+          >
+            Back to submissions
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -159,7 +180,11 @@ export default function Analytics() {
             <h2 className="text-lg font-semibold mb-3">
               Status Breakdown
             </h2>
+            <label htmlFor="analytics-assignment-select" className="sr-only">
+              Select assignment
+            </label>
             <select
+              id="analytics-assignment-select"
               value={selectedId}
               onChange={(e) => setSelectedId(e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 mb-4 text-sm"
@@ -204,7 +229,7 @@ export default function Analytics() {
           {/* Bar chart */}
           <div className="rounded-md bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-3">
-              Completion Rate by Assignment
+              Submission Rate by Assignment
             </h2>
             {barData.length === 0 ? (
               <p className="text-gray-400 text-sm py-12 text-center">

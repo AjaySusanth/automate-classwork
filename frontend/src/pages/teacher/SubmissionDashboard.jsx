@@ -120,11 +120,13 @@ export default function SubmissionDashboard() {
     setSavingGrade((prev) => ({ ...prev, [submissionId]: true }));
     setError("");
     try {
-      await gradeSubmission(submissionId, grade);
-      // Update local state
+      const result = await gradeSubmission(submissionId, grade);
+      // Update local state with server response
       setSubmissions((prev) =>
         prev.map((s) =>
-          s.id === submissionId ? { ...s, grade, gradedAt: new Date().toISOString() } : s,
+          s.id === submissionId
+            ? { ...s, grade: result.submission.grade, gradedAt: result.submission.gradedAt }
+            : s,
         ),
       );
     } catch (err) {

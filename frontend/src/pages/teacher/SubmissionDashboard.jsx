@@ -117,6 +117,10 @@ export default function SubmissionDashboard() {
       setError("Please enter a valid grade");
       return;
     }
+    if (totalMark != null && grade > totalMark) {
+      setError(`Grade cannot exceed total marks (${totalMark})`);
+      return;
+    }
     setSavingGrade((prev) => ({ ...prev, [submissionId]: true }));
     setError("");
     try {

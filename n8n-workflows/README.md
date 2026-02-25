@@ -1,82 +1,79 @@
 # n8n Workflows
 
 This folder contains exported n8n workflows so the automation logic is versioned in Git.
+All workflow JSONs are sanitized (credentials and instance metadata removed).
 
-## Assignment + Reminders Workflow
+---
 
-- File: `assignment-and-reminders.json`
-- Branch 1 (Webhook): sends new-assignment Telegram notifications to all telegram-linked students.
-- Branch 2 (Schedule Trigger): polls due reminders and sends reminder messages, then marks reminders as sent.
+## 1. Telegram Command Router
+
+- **File**: `Telegram Command Router.json`
+- **Trigger**: Single Telegram Trigger listening for all incoming messages
+- **Replaces**: the old `Telegram Assignments Workflow.json` and `telegram-start-linking.json` (merged to avoid webhook conflicts — Telegram allows only one webhook per bot)
+
+### Flow
+
+```
+Telegram Message → Parse Command → Switch (commandType)
+  ├── /start <token>  → Token present? → Link Telegram Account → Success / Error reply
+  ├── /start (no token) → Welcome message with instructions
+  ├── /assignments    → Fetch Pending → Build Message → Send Assignment List
+  ├── /help           → Help Message
+  └── default         → Invalid Command Message
+```
+
+### Supported Commands
+
+| Command | Description |
+|---|---|
+| `/start <token>` | Link Telegram account using token from the app |
+| `/assignments` | View pending assignments with submit buttons |
+| `/help` | Show available commands |
+
+### Error Handling (Linking)
+
+| Backend Error | User Message |
+|---|---|
+| `already linked` | ⚠️ This Telegram account is already linked to another user. |
+| `expired` | ⌛ Token expired. Please generate a fresh link in the app. |
+| `Invalid or used` | ❌ This token is invalid or already used. |
 
 ### Screenshot
 
-![n8n workflow canvas](workflow.png)
-
-## Telegram /start Linking Workflow
-
-- File: `telegram-start-linking.json`
-- Trigger: Listens for `/start <token>` messages from Telegram users
-- Logic:
-  1. Extracts token and chat ID from message
-  2. Validates token format
-  3. Calls backend `POST /api/telegram/link` with token and chatId
-  4. Routes based on success/error:
-     - **Success**: sends ✅ confirmation message
-     - **Missing token**: sends ❌ error message
-     - **Errors** (expired, already linked, invalid): sends user-friendly error messages based on backend error classification
-
-### Screenshot
-
-![Telegram linking workflow canvas](telegram-linking.png)
-
-### Error Handling
-
-The workflow includes smart error branching with user-friendly messages:
-- "already linked" → ⚠️ This Telegram account is already linked to another user.
-- "expired" → ⌛ Token expired. Please generate a fresh link in the app.
-- "Invalid or used" → ❌ This token is invalid or already used.
+![Telegram Command Router workflow](telegram-command-router.png)
 
 ### Required Backend Endpoints
 
-- `POST /api/telegram/link` - Links Telegram chatId to user account
+- `POST /api/telegram/link` — Links Telegram chatId to user account
+- `GET /api/assignments/pending-by-chat/:chatId` — Pending assignments for a chat
 
 ### Configuration
 
-- Replace credentials with your Telegram bot token
-- Update webhook ID if needed
-- URL uses `host.docker.internal:3001` for local development
-
-## Telegram Assignments Workflow
-
-- File: `Telegram Assignments Workflow.json`
-- Trigger: Listens for `/assignments` command from Telegram users
-- Logic:
-  1. Validates that the message text is `/assignments`
-  2. Fetches pending assignments from the backend using the Telegram chat ID
-  3. Formats a message with the list of assignments and creates inline keyboard buttons for each, pointing to the submission URL
-  4. Sends the formatted message back to the user via Telegram API
-
-### Screenshot
-
-![Telegram assignments workflow canvas](telegram-assignment.png)
-
-### Required Backend Endpoints
-
-- `GET /api/assignments/pending-by-chat/:chatId` - Retrieves a list of pending assignments for a specific Telegram chat
-
-### Configuration
-
-- Replace credentials with your Telegram bot token
-- Update the base URL in the "Format Message" node to your application's public URL (e.g., `https://your-app.com`)
+- Replace Telegram bot credentials with your own
+- Update `baseUrl` in the "Build Assignment Message" code node to your app's public URL
 - Backend URL defaults to `http://host.docker.internal:3001` for local Docker setups
 
+---
+
+## 2. Assignment Notifications + Reminders
+
+- **File**: `assignment-and-reminders.json`
+- **Branch 1** (Webhook `POST /assignment-created`): Sends new-assignment Telegram notifications to all linked students
+- **Branch 2** (Schedule Trigger, every minute): Polls due reminders and sends reminder messages, then marks them as sent
+
+### Screenshot
+
+![Assignment & Reminders workflow](workflow.png)
+
+### Required Backend Endpoints
+
+- `GET /api/users/telegram-linked` — All students with linked Telegram accounts
+- `GET /api/reminders/due-soon` — Reminders that should be sent now
+- `POST /api/reminders/:id/mark-sent` — Mark a reminder as sent
+
+---
 
 ## Notes
 
-- Workflow JSON is sanitized (credentials and instance metadata removed).
-- Required backend endpoints:
-  - GET `/api/users/telegram-linked`
-  - GET `/api/reminders/due-soon`
-  - POST `/api/reminders/:id/mark-sent`
-- Required environment variables:
-  - `N8N_WEBHOOK_URL`
+- All credentials and webhook IDs in the JSON files use `YOUR_*` placeholders
+- Required environment variable: `N8N_WEBHOOK_URL`

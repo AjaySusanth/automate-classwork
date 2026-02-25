@@ -1,0 +1,520 @@
+{
+  "name": "Telegram Command Router",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:3001/api/assignments/pending-by-chat/{{ $json.chatId }}",
+        "options": {}
+      },
+      "id": "85b5d974-9b4b-4217-a559-1e062184ba22",
+      "name": "Fetch Pending Assignments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -128,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1040,
+        144
+      ],
+      "id": "45ed3b71-67a8-4968-89d8-dc08769afc8f",
+      "name": "Trigger – Telegram Message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = ($json.message?.text || \"\").trim();\nconst chatId = String($json.message?.chat?.id || \"\");\n\n// Defaults\nlet commandType = \"unknown\";\nlet token = \"\";\n\n// Command parsing\nif (text.startsWith(\"/start\")) {\n  commandType = \"start\";\n  const parts = text.split(/\\s+/);\n  token = parts.length > 1 ? parts[1] : \"\";\n} else if (text === \"/assignments\") {\n  commandType = \"assignments\";\n} else if (text === \"/help\") {\n  commandType = \"help\";\n}\n\nreturn {\n  commandType,\n  token,\n  chatId,\n  originalMessage: text\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        144
+      ],
+      "id": "85bc50fe-aeed-4046-9d56-0eb6b351a35f",
+      "name": "Parse Telegram Command"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commandType }}",
+                    "rightValue": "start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "16aa3ef5-ebe8-4eb3-822d-be60c512486c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "caf2aae4-f927-4589-9835-15ae1f820f6c",
+                    "leftValue": "={{ $json.commandType }}",
+                    "rightValue": "assignments",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1253e8ac-aadd-441c-b933-4384be7570ad",
+                    "leftValue": "={{ $json.commandType }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2b8624d2-6a62-4d85-b24e-1c5f2d9ab954",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        112
+      ],
+      "id": "3b226b89-d150-4cfe-aba7-a2c81c64953a",
+      "name": "Command Type"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8e126d90-1c9b-4e6d-971a-d3e6332427c4",
+              "leftValue": "={{ $json.token }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -336,
+        -160
+      ],
+      "id": "3d9df4b6-17d1-4ad6-87f3-267240770b77",
+      "name": "Token Present?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3001/api/telegram/link",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $json.token }}"
+            },
+            {
+              "name": "chatId",
+              "value": "={{ $json.chatId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -128,
+        -256
+      ],
+      "id": "0e780315-c9d6-4ef3-814e-c3244ff1954c",
+      "name": "Link Telegram Account",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Parse Telegram Command\"].json.chatId }}",
+        "text": "✅ Telegram linked successfully. You will now receive assignment notifications.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        -336
+      ],
+      "id": "331aa5e9-39a1-4a06-a252-eae8e70d7b89",
+      "name": "Link Success Message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "👋 Welcome!  To link your Telegram account, please open the secure link from the app and start the bot using the format below:  🔑 /start <token>  Example:  /start AbC123XyZ  Once linked, you’ll receive assignment notifications here.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -64
+      ],
+      "id": "a39ad721-a364-4633-9514-7abe9836408e",
+      "name": "Start Without Token Message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "Vp1Fe9nTp8aXZhVr",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Parse Telegram Command\"].json.chatId }}",
+        "text": "={{ \n  $json.error?.message?.includes(\"already linked\")\n    ? \"⚠️ This Telegram account is already linked to another user.\"\n    : $json.error?.message?.includes(\"expired\")\n    ? \"⌛ Token expired. Please generate a fresh link in the app.\"\n    : $json.error?.message?.includes(\"Invalid or used\")\n    ? \"❌ This token is invalid or already used.\"\n    : \"❌ Unable to link your account. Please ensure you clicked the link correctly or try again later.\"\n}}",
+        "replyMarkup": "",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        -160
+      ],
+      "id": "48662841-1ce4-44eb-a61d-60c257954fc3",
+      "name": "Link Error Message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "Vp1Fe9nTp8aXZhVr",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read input\nconst input = $input.first().json;\nconst assignments = input.assignments;\n\n// Config\nconst chatId = $node[\"Trigger – Telegram Message\"].json.message.chat.id;\nconst baseUrl = 'http://localhost:3000';\n\n// Build formatted message text\nlet message = `📋 Your Pending Assignments (${assignments.length}):\\n\\n`;\n\nassignments.forEach((a, index) => {\n  const dueDate = new Date(a.dueDate).toLocaleDateString('en-US');\n  message += `${index + 1}️⃣ ${a.title}\\n`;\n  message += `Due: ${dueDate}\\n\\n`;\n});\n\n// Build inline keyboard (one button per row)\nconst inlineKeyboard = assignments.map(a => ([\n  {\n    text: `🚀 Submit: ${a.title}`,\n    url: `${baseUrl}/student/assignments/${a.id}/submit`\n  }\n]));\n\n// Return Telegram-ready payload\nreturn [\n  {\n    json: {\n      chat_id: chatId,\n      text: message,\n      parse_mode: 'Markdown',\n      reply_markup: {\n        inline_keyboard: inlineKeyboard\n      }\n    }\n  }\n];\n"
+      },
+      "id": "fa9ff061-6900-4169-9637-91c594fa8746",
+      "name": "Build Assignment Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=chat_id",
+              "value": "={{ $json.chat_id }}"
+            },
+            {
+              "name": "=text",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "reply_markup",
+              "value": "={{ $json.reply_markup }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        352,
+        144
+      ],
+      "id": "d9af47ce-6216-44d0-bd27-6dad374ff319",
+      "name": "Send Assignment List"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "🤖 Available Commands  ▶ /start <token> Link your Telegram account  ▶ /assignments View your pending assignments  ▶ /help Show this message",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7fb135cc-3b86-425d-a546-c1fa226350d4",
+      "name": "Help Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        336
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "Vp1Fe9nTp8aXZhVr",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "❓ I didn’t understand that command.  Here’s what I can do:  ▶ /start <token> Link your Telegram account  ▶ /assignments View your pending assignments  ▶ /help Show this help message",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "282cc71f-fe39-4a97-a3fb-49f7b2472cec",
+      "name": "Invalid Command Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        512
+      ],
+      "webhookId": "2fc9e390-789d-493b-a39e-761bc5197d57",
+      "credentials": {
+        "telegramApi": {
+          "id": "Vp1Fe9nTp8aXZhVr",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Pending Assignments": {
+      "main": [
+        [
+          {
+            "node": "Build Assignment Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger – Telegram Message": {
+      "main": [
+        [
+          {
+            "node": "Parse Telegram Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Telegram Command": {
+      "main": [
+        [
+          {
+            "node": "Command Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Command Type": {
+      "main": [
+        [
+          {
+            "node": "Token Present?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Pending Assignments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid Command Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Present?": {
+      "main": [
+        [
+          {
+            "node": "Link Telegram Account",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Start Without Token Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link Telegram Account": {
+      "main": [
+        [
+          {
+            "node": "Link Success Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Link Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Assignment Message": {
+      "main": [
+        [
+          {
+            "node": "Send Assignment List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "YOUR_VERSION_ID",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "YOUR_WORKFLOW_ID",
+  "tags": []
+}

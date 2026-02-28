@@ -11,12 +11,14 @@ export const getDeadlineInfo = (dueDate) => {
     return { text: "Overdue", className: "text-red-600 font-semibold" };
   }
 
+  // Sub-hour: check raw ms before ceiling to avoid unreachable Math.ceil >= 1
+  if (diffMs < 1000 * 60 * 60) {
+    return { text: "Less than 1 hour", className: "text-red-500 font-medium" };
+  }
+
   const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffHours < 1) {
-    return { text: "Less than 1 hour", className: "text-red-500 font-medium" };
-  }
   if (diffHours <= 2) {
     return { text: `Due in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`, className: "text-red-500 font-medium" };
   }

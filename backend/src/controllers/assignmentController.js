@@ -89,7 +89,7 @@ export const getAssignmentById = async (req, res) => {
 
 export const createAssignment = async (req, res) => {
   try {
-    const { title, description, dueDate, totalMark } = req.body;
+    const { title, description, dueDate } = req.body;
 
     if (!title || !description || !dueDate) {
       return res
@@ -109,7 +109,6 @@ export const createAssignment = async (req, res) => {
           description,
           dueDate: parsedDueDate,
           createdById: req.user.id,
-          totalMark: totalMark != null ? parseInt(totalMark, 10) : null,
         },
       });
 
@@ -144,7 +143,7 @@ export const createAssignment = async (req, res) => {
 export const updateAssignment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, dueDate, totalMark } = req.body;
+    const { title, description, dueDate } = req.body;
 
     const assignment = await prisma.assignment.findUnique({
       where: { id },
@@ -161,9 +160,6 @@ export const updateAssignment = async (req, res) => {
     const updateData = {};
     if (title) updateData.title = title;
     if (description) updateData.description = description;
-    if (totalMark !== undefined) {
-      updateData.totalMark = totalMark != null ? parseInt(totalMark, 10) : null;
-    }
 
     let parsedDueDate = null;
     const dueDateChanged = typeof dueDate !== "undefined";

@@ -264,7 +264,8 @@ export const submitAssignment = async (req, res) => {
       return res.status(201).json({ submission });
     } catch (error) {
       if (error?.code === "P2002") {
-        // Resubmission (though our check above should handle most cases, this is safe)
+        // Resubmission — re-validate with a conditional update to prevent race conditions
+        // Clean up old file if it exists
         if (existing?.fileUrl) {
           try {
             const afterPublic = existing.fileUrl.split("/storage/v1/object/public/").pop();
@@ -275,12 +276,12 @@ export const submitAssignment = async (req, res) => {
           }
         }
 
-        const submission = await prisma.submission.update({
+        // Conditional update: only succeeds if submission is not graded
+        const result = await prisma.submission.updateMany({
           where: {
-            assignmentId_studentId: {
-              assignmentId,
-              studentId: req.user.id,
-            },
+            assignmentId,
+            studentId: req.user.id,
+            grade: null, // Only allow update if not yet graded
           },
           data: {
             fileUrl,
@@ -290,8 +291,27 @@ export const submitAssignment = async (req, res) => {
           },
         });
 
+        if (result.count === 0) {
+          // The update didn't match — submission was graded or state changed
+          // Clean up the newly uploaded file since we can't use it
+          try {
+            await storageProvider.delete(storagePath);
+          } catch (_) { /* best effort */ }
+          return res.status(403).json({ error: "Submission is locked and cannot be updated" });
+        }
+
+        // Fetch the updated record to return it
+        const updatedSubmission = await prisma.submission.findUnique({
+          where: {
+            assignmentId_studentId: {
+              assignmentId,
+              studentId: req.user.id,
+            },
+          },
+        });
+
         sendSubmissionConfirmation(req.user.id, assignment.title, assignmentId, status);
-        return res.status(200).json({ submission });
+        return res.status(200).json({ submission: updatedSubmission });
       }
 
       throw error;

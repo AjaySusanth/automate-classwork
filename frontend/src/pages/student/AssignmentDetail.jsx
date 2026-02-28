@@ -2,34 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchAssignmentById } from "../../services/assignmentService";
 import { fetchMySubmission } from "../../services/submissionService";
+import { getDeadlineInfo } from "../../utils/deadlineInfo";
 
 const statusStyles = {
   PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
   SUBMITTED: "bg-green-100 text-green-700 border-green-200",
   LATE: "bg-red-100 text-red-700 border-red-200",
   GRADED: "bg-purple-100 text-purple-700 border-purple-200",
-};
-
-const getDeadlineInfo = (dueDate) => {
-  const now = new Date();
-  const due = new Date(dueDate);
-  const diffMs = due - now;
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffMs < 0) {
-    return { text: "Overdue", className: "text-red-600 font-semibold" };
-  }
-  if (diffHours <= 2) {
-    return { text: `Due in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`, className: "text-red-500 font-medium" };
-  }
-  if (diffDays <= 1) {
-    return { text: `Due in ${diffDays} day${diffDays !== 1 ? "s" : ""}`, className: "text-orange-500 font-medium" };
-  }
-  if (diffDays <= 3) {
-    return { text: `Due in ${diffDays} days`, className: "text-yellow-600" };
-  }
-  return { text: `Due ${due.toLocaleDateString()}`, className: "text-gray-500" };
 };
 
 export default function AssignmentDetail() {
@@ -40,6 +19,9 @@ export default function AssignmentDetail() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Clear stale state from previous assignment before loading
+    setAssignment(null);
+    setSubmission(null);
     setLoading(true);
     setError("");
 
@@ -53,6 +35,8 @@ export default function AssignmentDetail() {
         // Only treat as a real submission if it has an uploaded file
         if (submissionData.submission?.fileUrl) {
           setSubmission(submissionData.submission);
+        } else {
+          setSubmission(null);
         }
       } catch (err) {
         setError(err.response?.data?.error || "Failed to load assignment");

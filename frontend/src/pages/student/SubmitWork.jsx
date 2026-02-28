@@ -19,6 +19,12 @@ export default function SubmitWork() {
   const [submissionResult, setSubmissionResult] = useState(null);
 
   useEffect(() => {
+    // Reset all route-scoped state when assignmentId changes
+    setAssignment(null);
+    setExisting(null);
+    setFile(null);
+    setSubmitted(false);
+    setSubmissionResult(null);
     setLoading(true);
     setError("");
     setLockError("");

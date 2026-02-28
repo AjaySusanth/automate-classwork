@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchAssignments } from "../../services/assignmentService";
 import { fetchMySubmissions } from "../../services/submissionService";
 import { useAuth } from "../../context/AuthContext";
+import { getDeadlineInfo } from "../../utils/deadlineInfo";
 
 const statusStyles = {
   PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
@@ -12,28 +13,6 @@ const statusStyles = {
 };
 
 const formatStatus = (status) => status || "PENDING";
-
-const getDeadlineInfo = (dueDate) => {
-  const now = new Date();
-  const due = new Date(dueDate);
-  const diffMs = due - now;
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffMs < 0) {
-    return { text: "Overdue", className: "text-red-600 font-semibold" };
-  }
-  if (diffHours <= 2) {
-    return { text: `Due in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`, className: "text-red-500 font-medium" };
-  }
-  if (diffDays <= 1) {
-    return { text: `Due in ${diffDays} day${diffDays !== 1 ? "s" : ""}`, className: "text-orange-500 font-medium" };
-  }
-  if (diffDays <= 3) {
-    return { text: `Due in ${diffDays} days`, className: "text-yellow-600" };
-  }
-  return { text: `Due ${due.toLocaleDateString()}`, className: "text-gray-500" };
-};
 
 export default function MyAssignments() {
   const [assignments, setAssignments] = useState([]);
@@ -86,18 +65,20 @@ export default function MyAssignments() {
 
   const summaryCards = useMemo(() => {
     const counts = { PENDING: 0, SUBMITTED: 0, LATE: 0, GRADED: 0 };
-    submissions.forEach((sub) => {
+    // Use the same filtered submissionMap for consistency with the card list
+    const realSubmissions = Object.values(submissionMap);
+    realSubmissions.forEach((sub) => {
       const status = getStatusWithGraded(sub);
       if (counts[status] !== undefined) {
         counts[status]++;
       }
     });
     const pendingAssignments = assignments.filter(
-      (a) => !submissions.find((s) => s.assignmentId === a.id)
+      (a) => !submissionMap[a.id]
     );
-    counts.PENDING += pendingAssignments.length;
+    counts.PENDING = pendingAssignments.length;
     return counts;
-  }, [assignments, submissions]);
+  }, [assignments, submissionMap]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

@@ -8,9 +8,32 @@ const statusStyles = {
   PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
   SUBMITTED: "bg-green-100 text-green-700 border-green-200",
   LATE: "bg-red-100 text-red-700 border-red-200",
+  GRADED: "bg-purple-100 text-purple-700 border-purple-200",
 };
 
 const formatStatus = (status) => status || "PENDING";
+
+const getDeadlineInfo = (dueDate) => {
+  const now = new Date();
+  const due = new Date(dueDate);
+  const diffMs = due - now;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMs < 0) {
+    return { text: "Overdue", className: "text-red-600 font-semibold" };
+  }
+  if (diffHours <= 2) {
+    return { text: `Due in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`, className: "text-red-500 font-medium" };
+  }
+  if (diffDays <= 1) {
+    return { text: `Due in ${diffDays} day${diffDays !== 1 ? "s" : ""}`, className: "text-orange-500 font-medium" };
+  }
+  if (diffDays <= 3) {
+    return { text: `Due in ${diffDays} days`, className: "text-yellow-600" };
+  }
+  return { text: `Due ${due.toLocaleDateString()}`, className: "text-gray-500" };
+};
 
 export default function MyAssignments() {
   const [assignments, setAssignments] = useState([]);
@@ -21,10 +44,12 @@ export default function MyAssignments() {
   const navigate = useNavigate();
 
   const submissionMap = useMemo(() => {
-    return submissions.reduce((acc, submission) => {
-      acc[submission.assignmentId] = submission;
-      return acc;
-    }, {});
+    return submissions
+      .filter((s) => s.fileName) // only real submissions with a file
+      .reduce((acc, submission) => {
+        acc[submission.assignmentId] = submission;
+        return acc;
+      }, {});
   }, [submissions]);
 
   const loadData = async () => {
@@ -51,6 +76,28 @@ export default function MyAssignments() {
     logout();
     navigate("/login");
   };
+
+  const getStatusWithGraded = (submission) => {
+    if (submission?.grade != null) {
+      return "GRADED";
+    }
+    return formatStatus(submission?.status);
+  };
+
+  const summaryCards = useMemo(() => {
+    const counts = { PENDING: 0, SUBMITTED: 0, LATE: 0, GRADED: 0 };
+    submissions.forEach((sub) => {
+      const status = getStatusWithGraded(sub);
+      if (counts[status] !== undefined) {
+        counts[status]++;
+      }
+    });
+    const pendingAssignments = assignments.filter(
+      (a) => !submissions.find((s) => s.assignmentId === a.id)
+    );
+    counts.PENDING += pendingAssignments.length;
+    return counts;
+  }, [assignments, submissions]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -89,12 +136,33 @@ export default function MyAssignments() {
           <div className="rounded-md bg-white p-6 shadow-sm text-gray-600">
             No assignments available yet.
           </div>
-        ) : (
-          <div className="grid gap-4">
+          ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-md bg-white p-4 shadow-sm border-l-4 border-yellow-400">
+                <p className="text-sm text-gray-500">Pending</p>
+                <p className="text-2xl font-bold text-yellow-700">{summaryCards.PENDING}</p>
+              </div>
+              <div className="rounded-md bg-white p-4 shadow-sm border-l-4 border-green-400">
+                <p className="text-sm text-gray-500">Submitted</p>
+                <p className="text-2xl font-bold text-green-700">{summaryCards.SUBMITTED}</p>
+              </div>
+              <div className="rounded-md bg-white p-4 shadow-sm border-l-4 border-purple-400">
+                <p className="text-sm text-gray-500">Graded</p>
+                <p className="text-2xl font-bold text-purple-700">{summaryCards.GRADED}</p>
+              </div>
+              <div className="rounded-md bg-white p-4 shadow-sm border-l-4 border-red-400">
+                <p className="text-sm text-gray-500">Late</p>
+                <p className="text-2xl font-bold text-red-700">{summaryCards.LATE}</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
             {assignments.map((assignment) => {
               const submission = submissionMap[assignment.id];
-              const status = formatStatus(submission?.status);
+              const status = getStatusWithGraded(submission);
               const badgeStyle = statusStyles[status] || statusStyles.PENDING;
+              const deadlineInfo = getDeadlineInfo(assignment.dueDate);
 
               return (
                 <div
@@ -107,9 +175,21 @@ export default function MyAssignments() {
                         {assignment.title}
                       </h2>
                       <p className="text-gray-600">{assignment.description}</p>
-                      <p className="text-sm text-gray-500">
-                        Due: {new Date(assignment.dueDate).toLocaleString()}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span className="text-gray-500">
+                          Due: {new Date(assignment.dueDate).toLocaleString()}
+                        </span>
+                        {status === "PENDING" && (
+                          <span className={deadlineInfo.className}>
+                            ({deadlineInfo.text})
+                          </span>
+                        )}
+                      </div>
+                      {status === "GRADED" && submission?.grade != null && assignment.totalMark && (
+                        <div className="inline-flex items-center rounded-md bg-purple-50 px-3 py-1 text-sm font-medium text-purple-700">
+                          Score: {submission.grade}/{assignment.totalMark}
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col gap-2 items-start sm:items-end">
                       <span
@@ -118,17 +198,18 @@ export default function MyAssignments() {
                         {status}
                       </span>
                       <Link
-                        to={`/student/assignments/${assignment.id}/submit`}
+                        to={`/student/assignments/${assignment.id}`}
                         className="text-sm font-semibold text-blue-600 hover:underline"
                       >
-                        {status === "PENDING" ? "Submit" : "Update submission"}
+                        {status === "PENDING" ? "Submit" : "View Details"}
                       </Link>
                     </div>
                   </div>
                 </div>
               );
             })}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </div>

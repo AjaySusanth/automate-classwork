@@ -186,6 +186,8 @@ export const getMySubmission = async (req, res) => {
         fileName: true,
         status: true,
         submittedAt: true,
+        grade: true,
+        gradedAt: true,
       },
     });
 
@@ -215,6 +217,26 @@ export const submitAssignment = async (req, res) => {
       return res.status(404).json({ error: "Assignment not found" });
     }
 
+    // Check for existing submission and locking rules
+    const existing = await prisma.submission.findUnique({
+      where: {
+        assignmentId_studentId: {
+          assignmentId,
+          studentId: req.user.id,
+        },
+      },
+    });
+
+    if (existing && existing.fileUrl) {
+      // A real submission already exists
+      if (existing.grade !== null) {
+        return res.status(403).json({ error: "Cannot update a graded submission" });
+      }
+      if (new Date() > assignment.dueDate) {
+        return res.status(403).json({ error: "Cannot update submission after the due date" });
+      }
+    }
+
     // Upload file to storage
     const storagePath = buildStoragePath(assignmentId, req.user.id, file.originalname);
     const { url: fileUrl } = await storageProvider.upload(
@@ -242,23 +264,10 @@ export const submitAssignment = async (req, res) => {
       return res.status(201).json({ submission });
     } catch (error) {
       if (error?.code === "P2002") {
-        // Resubmission — delete old file, then update record
-        const existing = await prisma.submission.findUnique({
-          where: {
-            assignmentId_studentId: {
-              assignmentId,
-              studentId: req.user.id,
-            },
-          },
-          select: { fileUrl: true },
-        });
-
+        // Resubmission (though our check above should handle most cases, this is safe)
         if (existing?.fileUrl) {
-          // Extract path within bucket from Supabase public URL
-          // URL format: .../storage/v1/object/public/<bucket>/<path>
           try {
             const afterPublic = existing.fileUrl.split("/storage/v1/object/public/").pop();
-            // Strip the bucket name prefix to get the key within the bucket
             const oldKey = afterPublic.substring(afterPublic.indexOf("/") + 1);
             if (oldKey) await storageProvider.delete(oldKey);
           } catch (deleteErr) {
@@ -297,9 +306,16 @@ export const listMySubmissions = async (req, res) => {
   try {
     const submissions = await prisma.submission.findMany({
       where: { studentId: req.user.id },
-      include: {
+      select: {
+        id: true,
+        assignmentId: true,
+        status: true,
+        submittedAt: true,
+        grade: true,
+        gradedAt: true,
+        fileName: true,
         assignment: {
-          select: { id: true, title: true, dueDate: true },
+          select: { id: true, title: true, dueDate: true, totalMark: true },
         },
       },
       orderBy: { createdAt: "desc" },

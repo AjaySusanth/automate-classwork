@@ -14,6 +14,7 @@ import AssignmentForm from "./pages/teacher/AssignmentForm";
 import SubmissionDashboard from "./pages/teacher/SubmissionDashboard";
 import Analytics from "./pages/teacher/Analytics";
 import MyAssignments from "./pages/student/MyAssignments";
+import AssignmentDetail from "./pages/student/AssignmentDetail";
 import SubmitWork from "./pages/student/SubmitWork";
 import LinkTelegram from "./pages/student/LinkTelegram";
 
@@ -129,6 +130,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="STUDENT">
                 <MyAssignments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/assignments/:id"
+            element={
+              <ProtectedRoute requiredRole="STUDENT">
+                <AssignmentDetail />
               </ProtectedRoute>
             }
           />

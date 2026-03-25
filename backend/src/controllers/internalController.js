@@ -57,6 +57,16 @@ export const getDueReminders = async (req, res) => {
               student: {
                 telegramLinked: true,
                 telegramChatId: { not: null },
+                // Only include students who are still members of the assignment's classroom
+                memberships: {
+                  some: {
+                    classroom: {
+                      assignments: {
+                        some: { reminders: { some: { id: { not: undefined } } } },
+                      },
+                    },
+                  },
+                },
               },
             },
           },

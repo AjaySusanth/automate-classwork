@@ -13,10 +13,13 @@ import AssignmentList from "./pages/teacher/AssignmentList";
 import AssignmentForm from "./pages/teacher/AssignmentForm";
 import SubmissionDashboard from "./pages/teacher/SubmissionDashboard";
 import Analytics from "./pages/teacher/Analytics";
+import ClassroomList from "./pages/teacher/ClassroomList";
+import ClassroomDetail from "./pages/teacher/ClassroomDetail";
 import MyAssignments from "./pages/student/MyAssignments";
 import AssignmentDetail from "./pages/student/AssignmentDetail";
 import SubmitWork from "./pages/student/SubmitWork";
 import LinkTelegram from "./pages/student/LinkTelegram";
+import StudentClassroomList from "./pages/student/ClassroomList";
 
 const HomeRedirect = () => {
   const { user, loading } = useAuth();
@@ -34,7 +37,7 @@ const HomeRedirect = () => {
   }
 
   const redirectPath =
-    user.role === "TEACHER" ? "/teacher/assignments" : "/student/assignments";
+    user.role === "TEACHER" ? "/teacher/classrooms" : "/student/classrooms";
 
   return <Navigate to={redirectPath} replace />;
 };
@@ -52,7 +55,7 @@ const PublicRoute = ({ children }) => {
 
   if (user) {
     const redirectPath =
-      user.role === "TEACHER" ? "/teacher/assignments" : "/student/assignments";
+      user.role === "TEACHER" ? "/teacher/classrooms" : "/student/classrooms";
     return <Navigate to={redirectPath} replace />;
   }
 
@@ -123,6 +126,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/teacher/classrooms"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <ClassroomList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/classrooms/:id"
+            element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <ClassroomDetail />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Student routes - placeholder for now */}
           <Route
@@ -154,6 +173,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="STUDENT">
                 <LinkTelegram />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/classrooms"
+            element={
+              <ProtectedRoute requiredRole="STUDENT">
+                <StudentClassroomList />
               </ProtectedRoute>
             }
           />

@@ -146,6 +146,7 @@ exports.Prisma.AssignmentScalarFieldEnum = {
   description: 'description',
   dueDate: 'dueDate',
   createdById: 'createdById',
+  classroomId: 'classroomId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   totalMark: 'totalMark'
@@ -181,6 +182,21 @@ exports.Prisma.NotificationLogScalarFieldEnum = {
   status: 'status',
   sentAt: 'sentAt',
   errorMessage: 'errorMessage'
+};
+
+exports.Prisma.ClassroomScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  inviteCode: 'inviteCode',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ClassroomMemberScalarFieldEnum = {
+  id: 'id',
+  classroomId: 'classroomId',
+  studentId: 'studentId',
+  joinedAt: 'joinedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -230,7 +246,9 @@ exports.Prisma.ModelName = {
   Assignment: 'Assignment',
   Reminder: 'Reminder',
   Submission: 'Submission',
-  NotificationLog: 'NotificationLog'
+  NotificationLog: 'NotificationLog',
+  Classroom: 'Classroom',
+  ClassroomMember: 'ClassroomMember'
 };
 
 /**

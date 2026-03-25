@@ -49,11 +49,27 @@ const buildDefaultReminders = (assignmentId, dueDate) => {
 
 export const listAssignments = async (req, res) => {
   try {
-    const where =
-      req.user.role === "TEACHER" ? { createdById: req.user.id } : {};
+    const { classroomId } = req.query;
+    let where = {};
+
+    if (req.user.role === "TEACHER") {
+      where = { createdById: req.user.id };
+      if (classroomId) where.classroomId = classroomId;
+    } else {
+      // Students see only assignments in their classrooms
+      where = {
+        classroom: {
+          members: { some: { studentId: req.user.id } },
+        },
+      };
+      if (classroomId) where.classroomId = classroomId;
+    }
 
     const assignments = await prisma.assignment.findMany({
       where,
+      include: {
+        classroom: { select: { id: true, name: true } },
+      },
       orderBy: { dueDate: "asc" },
     });
 
@@ -70,6 +86,9 @@ export const getAssignmentById = async (req, res) => {
 
     const assignment = await prisma.assignment.findUnique({
       where: { id },
+      include: {
+        classroom: { select: { id: true, name: true } },
+      },
     });
 
     if (!assignment) {
@@ -78,6 +97,21 @@ export const getAssignmentById = async (req, res) => {
 
     if (req.user.role === "TEACHER" && assignment.createdById !== req.user.id) {
       return res.status(403).json({ error: "Access denied" });
+    }
+
+    // Student must be a member of the assignment's classroom
+    if (req.user.role === "STUDENT" && assignment.classroomId) {
+      const membership = await prisma.classroomMember.findUnique({
+        where: {
+          classroomId_studentId: {
+            classroomId: assignment.classroomId,
+            studentId: req.user.id,
+          },
+        },
+      });
+      if (!membership) {
+        return res.status(403).json({ error: "Access denied" });
+      }
     }
 
     res.json({ assignment });
@@ -89,12 +123,26 @@ export const getAssignmentById = async (req, res) => {
 
 export const createAssignment = async (req, res) => {
   try {
-    const { title, description, dueDate } = req.body;
+    const { title, description, dueDate, classroomId, totalMark } = req.body;
 
     if (!title || !description || !dueDate) {
       return res
         .status(400)
         .json({ error: "Title, description, and dueDate are required" });
+    }
+
+    if (!classroomId) {
+      return res.status(400).json({ error: "classroomId is required" });
+    }
+
+    // Verify teacher owns the classroom
+    const classroom = await prisma.classroom.findUnique({
+      where: { id: classroomId },
+      select: { id: true, teacherId: true },
+    });
+
+    if (!classroom || classroom.teacherId !== req.user.id) {
+      return res.status(403).json({ error: "You do not own this classroom" });
     }
 
     const parsedDueDate = parseDueDate(dueDate);
@@ -109,22 +157,25 @@ export const createAssignment = async (req, res) => {
           description,
           dueDate: parsedDueDate,
           createdById: req.user.id,
+          classroomId,
+          totalMark: totalMark ? Number(totalMark) : null,
         },
       });
 
       const reminders = buildDefaultReminders(assignment.id, parsedDueDate);
       await tx.reminder.createMany({ data: reminders });
 
-      const students = await tx.user.findMany({
-        where: { role: "STUDENT" },
-        select: { id: true },
+      // Create submission placeholders only for classroom members
+      const members = await tx.classroomMember.findMany({
+        where: { classroomId },
+        select: { studentId: true },
       });
 
-      if (students.length > 0) {
+      if (members.length > 0) {
         await tx.submission.createMany({
-          data: students.map((student) => ({
+          data: members.map((m) => ({
             assignmentId: assignment.id,
-            studentId: student.id,
+            studentId: m.studentId,
           })),
         });
       }
@@ -233,9 +284,12 @@ export const getPendingAssignments = async (req, res) => {
 
     const assignments = await prisma.assignment.findMany({
       where: {
+        classroom: {
+          members: { some: { studentId } },
+        },
         submissions: {
           some: {
-            studentId: studentId,
+            studentId,
             status: "PENDING",
           },
         },
@@ -245,6 +299,7 @@ export const getPendingAssignments = async (req, res) => {
         title: true,
         description: true,
         dueDate: true,
+        classroom: { select: { id: true, name: true } },
       },
       orderBy: { dueDate: "asc" },
     });
@@ -276,6 +331,9 @@ export const getPendingAssignmentsByChatId = async (req, res) => {
 
     const assignments = await prisma.assignment.findMany({
       where: {
+        classroom: {
+          members: { some: { studentId: user.id } },
+        },
         submissions: {
           some: {
             studentId: user.id,

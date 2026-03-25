@@ -210,11 +210,26 @@ export const submitAssignment = async (req, res) => {
 
     const assignment = await prisma.assignment.findUnique({
       where: { id: assignmentId },
-      select: { id: true, title: true, dueDate: true },
+      select: { id: true, title: true, dueDate: true, classroomId: true },
     });
 
     if (!assignment) {
       return res.status(404).json({ error: "Assignment not found" });
+    }
+
+    // Verify student is a member of the assignment's classroom
+    if (assignment.classroomId) {
+      const membership = await prisma.classroomMember.findUnique({
+        where: {
+          classroomId_studentId: {
+            classroomId: assignment.classroomId,
+            studentId: req.user.id,
+          },
+        },
+      });
+      if (!membership) {
+        return res.status(403).json({ error: "You are not a member of this classroom" });
+      }
     }
 
     // Check for existing submission and locking rules
@@ -325,7 +340,14 @@ export const submitAssignment = async (req, res) => {
 export const listMySubmissions = async (req, res) => {
   try {
     const submissions = await prisma.submission.findMany({
-      where: { studentId: req.user.id },
+      where: {
+        studentId: req.user.id,
+        assignment: {
+          classroom: {
+            members: { some: { studentId: req.user.id } },
+          },
+        },
+      },
       select: {
         id: true,
         assignmentId: true,

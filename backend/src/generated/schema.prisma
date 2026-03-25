@@ -54,6 +54,8 @@ model User {
   submissions     Submission[]
   notificationLog NotificationLog[]
   telegramTokens  TelegramLinkToken[]
+  classrooms      Classroom[]         @relation("ClassroomTeacher")
+  memberships     ClassroomMember[]
 }
 
 model TelegramLinkToken {
@@ -75,11 +77,13 @@ model Assignment {
   description String
   dueDate     DateTime
   createdById String
+  classroomId String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   totalMark   Int?
 
   createdBy   User              @relation("AssignmentCreatedBy", fields: [createdById], references: [id])
+  classroom   Classroom?        @relation(fields: [classroomId], references: [id])
   reminders   Reminder[]
   submissions Submission[]
   logs        NotificationLog[]
@@ -126,4 +130,29 @@ model NotificationLog {
   user User @relation(fields: [userId], references: [id])
 
   assignment Assignment? @relation(fields: [assignmentId], references: [id])
+}
+
+model Classroom {
+  id         String   @id @default(cuid())
+  name       String
+  inviteCode String   @unique @default(cuid())
+  teacherId  String
+  createdAt  DateTime @default(now())
+
+  teacher     User              @relation("ClassroomTeacher", fields: [teacherId], references: [id])
+  members     ClassroomMember[]
+  assignments Assignment[]
+}
+
+model ClassroomMember {
+  id          String   @id @default(cuid())
+  classroomId String
+  studentId   String
+  joinedAt    DateTime @default(now())
+
+  classroom Classroom @relation(fields: [classroomId], references: [id])
+  student   User      @relation(fields: [studentId], references: [id])
+
+  @@unique([classroomId, studentId])
+  @@index([studentId])
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { fetchAssignments } from "../../services/assignmentService";
 import { fetchMySubmissions } from "../../services/submissionService";
 import { useAuth } from "../../context/AuthContext";
@@ -21,6 +21,8 @@ export default function MyAssignments() {
   const [error, setError] = useState("");
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const classroomId = searchParams.get("classroom");
 
   const submissionMap = useMemo(() => {
     return submissions
@@ -35,7 +37,7 @@ export default function MyAssignments() {
     try {
       setError("");
       const [assignmentData, submissionData] = await Promise.all([
-        fetchAssignments(),
+        fetchAssignments(classroomId),
         fetchMySubmissions(),
       ]);
       setAssignments(assignmentData.assignments || []);
@@ -48,8 +50,9 @@ export default function MyAssignments() {
   };
 
   useEffect(() => {
+    setLoading(true);
     loadData();
-  }, []);
+  }, [classroomId]);
 
   const handleLogout = () => {
     logout();
@@ -89,6 +92,12 @@ export default function MyAssignments() {
             <p className="text-gray-600">Welcome, {user?.name || "Student"}.</p>
           </div>
           <div className="flex gap-3">
+            <Link
+              to="/student/classrooms"
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+            >
+              Classrooms
+            </Link>
             <Link
               to="/student/link-telegram"
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"

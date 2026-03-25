@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { fetchAssignments, deleteAssignment } from "../../services/assignmentService";
 import { useAuth } from "../../context/AuthContext";
 
@@ -9,11 +9,13 @@ export default function AssignmentList() {
   const [error, setError] = useState("");
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const classroomId = searchParams.get("classroom");
 
   const loadAssignments = async () => {
     try {
       setError("");
-      const data = await fetchAssignments();
+      const data = await fetchAssignments(classroomId);
       setAssignments(data.assignments || []);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to load assignments");
@@ -24,7 +26,7 @@ export default function AssignmentList() {
 
   useEffect(() => {
     loadAssignments();
-  }, []);
+  }, [classroomId]);
 
   const handleDelete = async (assignmentId) => {
     if (!window.confirm("Delete this assignment?")) {
@@ -54,10 +56,16 @@ export default function AssignmentList() {
           </div>
           <div className="flex gap-3">
             <Link
-              to="/teacher/assignments/new"
+              to={classroomId ? `/teacher/assignments/new?classroom=${classroomId}` : "/teacher/assignments/new"}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
             >
               New Assignment
+            </Link>
+            <Link
+              to="/teacher/classrooms"
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+            >
+              Classrooms
             </Link>
             <Link
               to="/teacher/submissions"
@@ -100,9 +108,16 @@ export default function AssignmentList() {
                       {assignment.title}
                     </h2>
                     <p className="text-gray-600">{assignment.description}</p>
-                    <p className="text-sm text-gray-500">
-                      Due: {new Date(assignment.dueDate).toLocaleString()}
-                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="text-gray-500">
+                        Due: {new Date(assignment.dueDate).toLocaleString()}
+                      </span>
+                      {assignment.classroom && (
+                        <span className="rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-medium">
+                          {assignment.classroom.name}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-3">
                     <Link

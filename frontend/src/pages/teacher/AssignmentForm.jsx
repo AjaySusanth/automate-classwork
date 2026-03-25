@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   createAssignment,
   fetchAssignmentById,
   updateAssignment,
 } from "../../services/assignmentService";
+import { fetchClassrooms } from "../../services/classroomService";
 
 const toInputValue = (isoString) => {
   if (!isoString) return "";
@@ -16,18 +17,30 @@ const toInputValue = (isoString) => {
 
 export default function AssignmentForm() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
 
+  const [classrooms, setClassrooms] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     dueDate: "",
     totalMark: "",
+    classroomId: searchParams.get("classroom") || "",
   });
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  // Load classrooms for the dropdown (only needed when creating)
+  useEffect(() => {
+    if (!isEditing) {
+      fetchClassrooms()
+        .then((data) => setClassrooms(data.classrooms || []))
+        .catch(() => {});
+    }
+  }, [isEditing]);
 
   useEffect(() => {
     const loadAssignment = async () => {
@@ -74,6 +87,7 @@ export default function AssignmentForm() {
       if (isEditing) {
         await updateAssignment(id, payload);
       } else {
+        payload.classroomId = formData.classroomId;
         await createAssignment(payload);
       }
 
@@ -127,6 +141,26 @@ export default function AssignmentForm() {
                 placeholder="Assignment title"
               />
             </div>
+
+            {!isEditing && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Classroom
+                </label>
+                <select
+                  name="classroomId"
+                  value={formData.classroomId}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select a classroom</option>
+                  {classrooms.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

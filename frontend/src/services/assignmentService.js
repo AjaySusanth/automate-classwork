@@ -1,7 +1,8 @@
 import api from "./api.js";
 
-export const fetchAssignments = async () => {
-  const response = await api.get("/assignments");
+export const fetchAssignments = async (classroomId) => {
+  const params = classroomId ? { classroomId } : {};
+  const response = await api.get("/assignments", { params });
   return response.data;
 };
 

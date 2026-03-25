@@ -1,16 +1,46 @@
 import prisma from "../config/db.config.js";
 
-const toIsoString = (value) => {
-  if (!value) {
-    return null;
-  }
+/**
+ * Internal (service-level) handlers for n8n workflows.
+ * These bypass user-specific ownership checks since
+ * they are protected by the INTERNAL_API_KEY instead of JWT.
+ */
 
+const toIsoString = (value) => {
+  if (!value) return null;
   return value.toISOString ? value.toISOString() : value;
 };
 
 /**
- * Get due reminders with telegram-linked students who are still pending
- * Teacher-only endpoint used by n8n scheduled workflow
+ * GET /api/internal/telegram-linked
+ * Returns all telegram-linked students (across all teachers/classrooms).
+ */
+export const getTelegramLinkedStudents = async (req, res) => {
+  try {
+    const students = await prisma.user.findMany({
+      where: {
+        role: "STUDENT",
+        telegramLinked: true,
+        telegramChatId: { not: null },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        telegramChatId: true,
+      },
+    });
+
+    return res.status(200).json(students);
+  } catch (error) {
+    console.error("[internal] Error fetching telegram-linked students:", error);
+    return res.status(500).json({ error: "Failed to fetch students" });
+  }
+};
+
+/**
+ * GET /api/internal/reminders/due-soon
+ * Returns all unsent due reminders across ALL teachers.
  */
 export const getDueReminders = async (req, res) => {
   try {
@@ -21,14 +51,13 @@ export const getDueReminders = async (req, res) => {
         sent: false,
         reminderTime: { lte: now },
         assignment: {
-          createdById: req.user.id,
           submissions: {
             some: {
               status: "PENDING",
               student: {
                 telegramLinked: true,
                 telegramChatId: { not: null },
-                // Only include students who are members of the assignment's classroom
+                // Only include students who are still members of the assignment's classroom
                 memberships: {
                   some: {
                     classroom: {
@@ -90,28 +119,23 @@ export const getDueReminders = async (req, res) => {
 
     return res.status(200).json({ reminders: payload });
   } catch (error) {
-    console.error("Get due reminders error:", error);
+    console.error("[internal] Get due reminders error:", error);
     return res.status(500).json({ error: "Failed to fetch due reminders" });
   }
 };
 
 /**
- * Mark a reminder as sent after n8n completes notification
+ * POST /api/internal/reminders/:id/mark-sent
+ * Marks a reminder as sent (no ownership check).
  */
 export const markReminderSent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const reminder = await prisma.reminder.findUnique({
-      where: { id },
-      include: { assignment: { select: { createdById: true } } },
-    });
+    const reminder = await prisma.reminder.findUnique({ where: { id } });
+
     if (!reminder) {
       return res.status(404).json({ error: "Reminder not found" });
-    }
-
-    if (reminder.assignment?.createdById !== req.user.id) {
-      return res.status(403).json({ error: "Access denied" });
     }
 
     const updated = await prisma.reminder.update({
@@ -123,7 +147,7 @@ export const markReminderSent = async (req, res) => {
       .status(200)
       .json({ reminder: { id: updated.id, sent: updated.sent } });
   } catch (error) {
-    console.error("Mark reminder sent error:", error);
+    console.error("[internal] Mark reminder sent error:", error);
     return res.status(500).json({ error: "Failed to mark reminder as sent" });
   }
 };

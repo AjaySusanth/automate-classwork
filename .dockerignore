@@ -1,0 +1,31 @@
+# Dependencies - these get installed fresh inside the container
+
+node_modules
+frontend/node_modules
+backend/node_modules
+
+# Git history - not needed in the container
+.git
+.gitignore
+
+# Environment files - NEVER bake secrets into an image
+
+.env
+backend/.env
+frontend/.env
+
+# Development/docs files
+*.md
+docker-compose.yml
+dev_plan_checklist.md
+implementation_plan.md
+implementation_plan_student_feat.md
+
+# n8n workflows - these run in a separate container
+n8n-workflows
+
+# IDE and OS files
+.vscode
+.idea
+*.swp
+Thumbs.db

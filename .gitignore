@@ -1,0 +1,6 @@
+test.env
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars

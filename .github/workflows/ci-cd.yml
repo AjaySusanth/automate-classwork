@@ -1,0 +1,262 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for OIDC token exchange with Azure
+  contents: read
+
+env:
+  # Azure Container Registry
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  IMAGE_NAME: classwork-app
+  # Azure Resource Config
+  RESOURCE_GROUP: rg-classwork-prod
+  STAGING_APP_NAME: classwork-api-staging
+  PROD_APP_NAME: classwork-api-prod
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Quality Gate — Lint + Unit Tests
+  # Runs first. Nothing reaches Azure if this fails.
+  # ─────────────────────────────────────────────
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: backend
+        run: npm test
+        env:
+          # Provide a fake DATABASE_URL so db.config.js doesn't crash on import.
+          # Tests mock Prisma — no real DB connection is made.
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+          JWT_SECRET: test-secret-for-ci
+
+  # ─────────────────────────────────────────────
+  # JOB 2: Build, Push to ACR, Deploy to Staging
+  # Runs only after quality-gate passes.
+  # ─────────────────────────────────────────────
+  deploy-staging:
+    name: Build & Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: quality-gate
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Set image tag (short SHA)
+        id: meta
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
+          echo "image_tag=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "Image tag: ${SHORT_SHA}"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }} \
+            -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest \
+            .
+
+      - name: Push Docker image to ACR
+        run: |
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }}
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy new image to Staging
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az containerapp update \
+              --name ${{ env.STAGING_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }}
+
+      - name: Wait for Staging to become healthy
+        run: |
+          STAGING_FQDN=$(az containerapp show \
+            --name ${{ env.STAGING_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.configuration.ingress.fqdn" -o tsv)
+
+          HEALTH_URL="https://${STAGING_FQDN}/health"
+          echo "Polling Staging health: ${HEALTH_URL}"
+
+          for i in $(seq 1 10); do
+            echo "Attempt $i/10..."
+            RESPONSE=$(curl -sf --max-time 10 "${HEALTH_URL}" || echo "FAILED")
+            echo "Response: ${RESPONSE}"
+
+            if echo "${RESPONSE}" | grep -q '"status":"ok"'; then
+              echo "✅ Staging is healthy!"
+              exit 0
+            fi
+
+            echo "Not ready yet, waiting 15s..."
+            sleep 15
+          done
+
+          echo "❌ Staging smoke test failed after 10 attempts."
+          exit 1
+        env:
+          AZURE_DEFAULTS_GROUP: ${{ env.RESOURCE_GROUP }}
+
+  # ─────────────────────────────────────────────
+  # JOB 3: Blue/Green Deploy to Production
+  # Runs only after staging smoke test passes.
+  # New revision starts at 0% traffic.
+  # Traffic shifts ONLY after revision-specific smoke test passes.
+  # ─────────────────────────────────────────────
+  deploy-production:
+    name: Blue/Green Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production  # Enables GitHub environment protection rules
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy new revision to Production (0% traffic)
+        id: new_revision
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            IMAGE_TAG="${{ needs.deploy-staging.outputs.image_tag }}"
+            REVISION_SUFFIX="sha-${IMAGE_TAG}"
+
+            echo "Deploying new revision with suffix: ${REVISION_SUFFIX}"
+
+            # Deploy new revision — gets 0% traffic initially because we'll set weights manually
+            az containerapp update \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG} \
+              --revision-suffix ${REVISION_SUFFIX}
+
+            # Get the full revision name
+            REVISION_NAME="${{ env.PROD_APP_NAME }}--${REVISION_SUFFIX}"
+            echo "revision_name=${REVISION_NAME}" >> $GITHUB_OUTPUT
+
+            # Get the revision-specific FQDN for canary smoke test
+            REVISION_FQDN=$(az containerapp revision show \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --revision ${REVISION_NAME} \
+              --query "properties.fqdn" -o tsv)
+            echo "revision_fqdn=${REVISION_FQDN}" >> $GITHUB_OUTPUT
+            echo "New revision FQDN: ${REVISION_FQDN}"
+
+      - name: Smoke test new Production revision (0% traffic)
+        run: |
+          REVISION_FQDN="${{ steps.new_revision.outputs.revision_fqdn }}"
+          HEALTH_URL="https://${REVISION_FQDN}/health"
+          echo "Testing new revision directly: ${HEALTH_URL}"
+
+          for i in $(seq 1 8); do
+            echo "Attempt $i/8..."
+            RESPONSE=$(curl -sf --max-time 10 "${HEALTH_URL}" || echo "FAILED")
+            echo "Response: ${RESPONSE}"
+
+            if echo "${RESPONSE}" | grep -q '"status":"ok"'; then
+              echo "✅ New production revision is healthy — safe to shift traffic!"
+              exit 0
+            fi
+
+            echo "Not ready yet, waiting 15s..."
+            sleep 15
+          done
+
+          echo "❌ New production revision failed smoke test. Old revision still serving 100% traffic."
+          exit 1
+
+      - name: Shift 100% traffic to new revision
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            REVISION_NAME="${{ steps.new_revision.outputs.revision_name }}"
+            echo "Shifting 100% traffic to: ${REVISION_NAME}"
+
+            az containerapp ingress traffic set \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --revision-weight ${REVISION_NAME}=100
+
+            echo "✅ Traffic shifted. Production is running new revision."
+
+      - name: Deactivate old revisions
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            NEW_REVISION="${{ steps.new_revision.outputs.revision_name }}"
+            echo "Deactivating old revisions (keeping: ${NEW_REVISION})"
+
+            # List all active revisions except the new one
+            OLD_REVISIONS=$(az containerapp revision list \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --query "[?properties.active==\`true\` && name!='${NEW_REVISION}'].name" \
+              -o tsv)
+
+            if [ -z "$OLD_REVISIONS" ]; then
+              echo "No old revisions to deactivate."
+              exit 0
+            fi
+
+            for revision in $OLD_REVISIONS; do
+              echo "Deactivating: $revision"
+              az containerapp revision deactivate \
+                --name ${{ env.PROD_APP_NAME }} \
+                --resource-group ${{ env.RESOURCE_GROUP }} \
+                --revision $revision
+            done
+
+            echo "✅ Old revisions deactivated."

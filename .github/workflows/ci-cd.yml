@@ -171,8 +171,23 @@ jobs:
             IMAGE_TAG="${{ needs.deploy-staging.outputs.image_tag }}"
             REVISION_SUFFIX="sha-${IMAGE_TAG}"
 
-            echo "Deploying new revision with suffix: ${REVISION_SUFFIX}"
+            echo "Determining currently active revision before update..."
+            # Query for the revision that currently has traffic weight (last known good)
+            CURRENT_ACTIVE_REVISION=$(az containerapp revision list \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --query "[?properties.active==\`true\` && properties.trafficWeight==\`100\`].name" -o tsv | head -n 1)
+            
+            # If no revision is active (e.g. first deploy), default to blank
+            if [ -z "$CURRENT_ACTIVE_REVISION" ]; then
+              echo "No active revision found. First time deploy."
+              CURRENT_ACTIVE_REVISION="none"
+            fi
+            echo "Last known good revision: ${CURRENT_ACTIVE_REVISION}"
+            echo "current_active_revision=${CURRENT_ACTIVE_REVISION}" >> $GITHUB_OUTPUT
 
+            echo "Deploying new revision with suffix: ${REVISION_SUFFIX}"
+            
             # Deploy new revision — gets 0% traffic initially because we'll set weights manually
             az containerapp update \
               --name ${{ env.PROD_APP_NAME }} \
@@ -194,6 +209,7 @@ jobs:
             echo "New revision FQDN: ${REVISION_FQDN}"
 
       - name: Smoke test new Production revision (0% traffic)
+        id: smoke_test
         run: |
           REVISION_FQDN="${{ steps.new_revision.outputs.revision_fqdn }}"
           HEALTH_URL="https://${REVISION_FQDN}/health"
@@ -213,8 +229,39 @@ jobs:
             sleep 15
           done
 
-          echo "❌ New production revision failed smoke test. Old revision still serving 100% traffic."
+          echo "❌ New production revision failed smoke test. Triggering rollback."
           exit 1
+
+      - name: Auto-Rollback on Failure
+        if: failure() && steps.smoke_test.outcome == 'failure'
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            PREV_REVISION="${{ steps.new_revision.outputs.current_active_revision }}"
+            NEW_REVISION="${{ steps.new_revision.outputs.revision_name }}"
+
+            if [ "$PREV_REVISION" = "none" ] || [ -z "$PREV_REVISION" ]; then
+              echo "No previous active revision found to rollback to! First-time deployment failed."
+              exit 1
+            fi
+
+            echo "🚨 SMOKE TEST FAILED! Activating recovery protocol..."
+            echo "Rolling back 100% traffic to: ${PREV_REVISION}"
+
+            # 1. Instantly shift traffic back to the last known good revision
+            az containerapp ingress traffic set \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --revision-weight ${PREV_REVISION}=100
+
+            # 2. Deactivate the new broken revision so it doesn't serve stray requests or consume resources
+            az containerapp revision deactivate \
+              --name ${{ env.PROD_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --revision ${NEW_REVISION}
+
+            echo "✅ Rollback complete. Old revision is successfully serving 100% of live traffic."
 
       - name: Shift 100% traffic to new revision
         uses: azure/cli@v2

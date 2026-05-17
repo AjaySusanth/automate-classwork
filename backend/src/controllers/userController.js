@@ -1,3 +1,5 @@
+import prisma from "../config/db.config.js";
+
 /**
  * Get telegram-linked students.
  * Used by n8n to determine who should receive an assignment notification.

@@ -13,16 +13,30 @@ const toIsoString = (value) => {
 
 /**
  * GET /api/internal/telegram-linked
- * Returns all telegram-linked students (across all teachers/classrooms).
+ * Returns telegram-linked students, optionally scoped to a specific classroom.
+ *
+ * If classroomId is provided → return only members of that classroom who have
+ * Telegram linked (targeted, correct behaviour for assignment notifications).
+ * If classroomId is omitted → return ALL telegram-linked students (generic broadcast).
  */
 export const getTelegramLinkedStudents = async (req, res) => {
   try {
+    const { classroomId } = req.query;
+
+    const where = {
+      role: "STUDENT",
+      telegramLinked: true,
+      telegramChatId: { not: null },
+      // Only scope to classroom members when classroomId is supplied
+      ...(classroomId && {
+        memberships: {
+          some: { classroomId },
+        },
+      }),
+    };
+
     const students = await prisma.user.findMany({
-      where: {
-        role: "STUDENT",
-        telegramLinked: true,
-        telegramChatId: { not: null },
-      },
+      where,
       select: {
         id: true,
         name: true,

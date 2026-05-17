@@ -14,6 +14,7 @@ const notifyN8nAssignmentCreated = async (assignment) => {
     description: assignment.description,
     dueDate: assignment.dueDate?.toISOString?.() ?? assignment.dueDate,
     createdById: assignment.createdById,
+    classroomId: assignment.classroomId, // ← Required by n8n to scope notifications to classroom members only
   };
 
   try {

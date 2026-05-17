@@ -18,11 +18,21 @@ WORKDIR /app/backend
 
 COPY backend/package.json backend/package-lock.json ./
 
-RUN npm ci --omit=dev
+# Install ALL dependencies first (including dev) so that the TypeScript
+# runtime (tsx) is available for prisma.config.ts when generating the client.
+RUN npm ci
 
 COPY backend/ ./
 
+# Generate the Prisma client BEFORE pruning dev deps.
+# prisma.config.ts is a TypeScript file — it needs tsx (a devDependency) to run.
+# If we ran npm ci --omit=dev first, this step would fail silently
+# and the generated client would land in the wrong location.
 RUN npx prisma generate
+
+# Now prune dev dependencies. The generated client in src/generated/ is already
+# on disk and will be copied to the production stage below.
+RUN npm prune --omit=dev
 
 FROM node:22-alpine as production
 

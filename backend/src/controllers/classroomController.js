@@ -111,6 +111,10 @@ export const getClassroom = async (req, res) => {
 
 /**
  * Join a classroom by invite code. Student only.
+ *
+ * Bug fix: When a student joins, we backfill PENDING submission records
+ * for all assignments that were created BEFORE they joined. Without this,
+ * new joiners would never see past assignments in their dashboard.
  */
 export const joinClassroom = async (req, res) => {
   try {
@@ -143,11 +147,37 @@ export const joinClassroom = async (req, res) => {
       return res.status(409).json({ error: "You are already a member of this classroom" });
     }
 
-    const member = await prisma.classroomMember.create({
-      data: {
-        classroomId: classroom.id,
-        studentId: req.user.id,
-      },
+    // Use a transaction: create membership + backfill past assignment submissions atomically.
+    // If either step fails, the whole thing rolls back — student is not half-joined.
+    const member = await prisma.$transaction(async (tx) => {
+      // 1. Create the classroom membership
+      const newMember = await tx.classroomMember.create({
+        data: {
+          classroomId: classroom.id,
+          studentId: req.user.id,
+        },
+      });
+
+      // 2. Find all assignments that already exist in this classroom
+      const existingAssignments = await tx.assignment.findMany({
+        where: { classroomId: classroom.id },
+        select: { id: true },
+      });
+
+      // 3. Create PENDING submission placeholders for each past assignment
+      // so the student can see and submit them from their dashboard
+      if (existingAssignments.length > 0) {
+        await tx.submission.createMany({
+          data: existingAssignments.map((a) => ({
+            assignmentId: a.id,
+            studentId: req.user.id,
+            // status defaults to PENDING as defined in schema
+          })),
+          skipDuplicates: true, // safety net in case of race conditions
+        });
+      }
+
+      return newMember;
     });
 
     res.status(201).json({ member, classroom });

@@ -35,9 +35,16 @@ resource "azurerm_postgresql_flexible_server" "db" {
     tags = azurerm_resource_group.main.tags
 }
 
-# Create the actual database inside the server
+# Production database
 resource "azurerm_postgresql_flexible_server_database" "classwork" {
     name = var.project_name
+    server_id = azurerm_postgresql_flexible_server.db.id
+    charset = "UTF8"
+    collation = "en_US.utf8"
+}
+
+resource "azurerm_postgresql_flexible_server_database" "classwork_staging" {
+    name = "${var.project_name}_staging"
     server_id = azurerm_postgresql_flexible_server.db.id
     charset = "UTF8"
     collation = "en_US.utf8"
@@ -149,7 +156,8 @@ resource "azurerm_container_app" "staging" {
         memory = "0.5Gi"
         env {
             name  = "DATABASE_URL"
-            value = "postgresql://${var.db_admin_user}:${var.db_admin_password}@${azurerm_postgresql_flexible_server.db.fqdn}:5432/${var.project_name}?sslmode=require"
+            # Staging uses its own isolated database — NOT the production one.
+            value = "postgresql://${var.db_admin_user}:${var.db_admin_password}@${azurerm_postgresql_flexible_server.db.fqdn}:5432/${var.project_name}_staging?sslmode=require"
         }
         env {
             name  = "JWT_SECRET"

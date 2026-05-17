@@ -55,6 +55,7 @@ export const getTelegramLinkedStudents = async (req, res) => {
 /**
  * GET /api/internal/reminders/due-soon
  * Returns all unsent due reminders across ALL teachers.
+ * Self-healing: automatically marks reminders with no remaining active students as sent.
  */
 export const getDueReminders = async (req, res) => {
   try {
@@ -64,27 +65,6 @@ export const getDueReminders = async (req, res) => {
       where: {
         sent: false,
         reminderTime: { lte: now },
-        assignment: {
-          submissions: {
-            some: {
-              status: "PENDING",
-              student: {
-                telegramLinked: true,
-                telegramChatId: { not: null },
-                // Only include students who are still members of the assignment's classroom
-                memberships: {
-                  some: {
-                    classroom: {
-                      assignments: {
-                        some: { reminders: { some: { id: { not: undefined } } } },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
       },
       orderBy: { reminderTime: "asc" },
       include: {
@@ -93,6 +73,15 @@ export const getDueReminders = async (req, res) => {
             id: true,
             title: true,
             dueDate: true,
+            classroom: {
+              select: {
+                members: {
+                  select: {
+                    studentId: true,
+                  },
+                },
+              },
+            },
             submissions: {
               where: {
                 status: "PENDING",
@@ -117,21 +106,44 @@ export const getDueReminders = async (req, res) => {
       },
     });
 
-    const payload = reminders.map((reminder) => ({
-      id: reminder.id,
-      type: reminder.type,
-      reminderTime: toIsoString(reminder.reminderTime),
-      assignment: {
-        id: reminder.assignment.id,
-        title: reminder.assignment.title,
-        dueDate: toIsoString(reminder.assignment.dueDate),
-      },
-      students: reminder.assignment.submissions.map(
-        (submission) => submission.student,
-      ),
-    }));
+    const activeReminders = [];
+    const emptyReminderIds = [];
 
-    return res.status(200).json({ reminders: payload });
+    for (const reminder of reminders) {
+      const activeMemberIds = new Set(
+        reminder.assignment.classroom?.members.map((m) => m.studentId) || []
+      );
+
+      const activeStudents = reminder.assignment.submissions
+        .filter((submission) => activeMemberIds.has(submission.student.id))
+        .map((submission) => submission.student);
+
+      if (activeStudents.length > 0) {
+        activeReminders.push({
+          id: reminder.id,
+          type: reminder.type,
+          reminderTime: toIsoString(reminder.reminderTime),
+          assignment: {
+            id: reminder.assignment.id,
+            title: reminder.assignment.title,
+            dueDate: toIsoString(reminder.assignment.dueDate),
+          },
+          students: activeStudents,
+        });
+      } else {
+        emptyReminderIds.push(reminder.id);
+      }
+    }
+
+    // Self-heal: mark empty reminders as sent so they don't clog the schedule
+    if (emptyReminderIds.length > 0) {
+      await prisma.reminder.updateMany({
+        where: { id: { in: emptyReminderIds } },
+        data: { sent: true },
+      });
+    }
+
+    return res.status(200).json({ reminders: activeReminders });
   } catch (error) {
     console.error("[internal] Get due reminders error:", error);
     return res.status(500).json({ error: "Failed to fetch due reminders" });

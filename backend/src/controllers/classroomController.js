@@ -207,8 +207,22 @@ export const leaveClassroom = async (req, res) => {
       return res.status(404).json({ error: "You are not a member of this classroom" });
     }
 
-    await prisma.classroomMember.delete({
-      where: { id: membership.id },
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete membership
+      await tx.classroomMember.delete({
+        where: { id: membership.id },
+      });
+
+      // 2. Delete PENDING submissions for this student in this classroom's assignments
+      await tx.submission.deleteMany({
+        where: {
+          studentId: req.user.id,
+          status: "PENDING",
+          assignment: {
+            classroomId: id,
+          },
+        },
+      });
     });
 
     res.json({ success: true });
@@ -251,8 +265,22 @@ export const removeMember = async (req, res) => {
       return res.status(404).json({ error: "Student is not a member of this classroom" });
     }
 
-    await prisma.classroomMember.delete({
-      where: { id: membership.id },
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete membership
+      await tx.classroomMember.delete({
+        where: { id: membership.id },
+      });
+
+      // 2. Delete PENDING submissions for this student in this classroom's assignments
+      await tx.submission.deleteMany({
+        where: {
+          studentId,
+          status: "PENDING",
+          assignment: {
+            classroomId: id,
+          },
+        },
+      });
     });
 
     res.json({ success: true });
